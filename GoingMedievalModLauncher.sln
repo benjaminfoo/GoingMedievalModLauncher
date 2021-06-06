@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoingMedievalModLauncher", "GoingMedievalModLauncher\GoingMedievalModLauncher.csproj", "{91AECC71-AB38-4E60-BC8D-34263B818A39}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91AECC71-AB38-4E60-BC8D-34263B818A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91AECC71-AB38-4E60-BC8D-34263B818A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91AECC71-AB38-4E60-BC8D-34263B818A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91AECC71-AB38-4E60-BC8D-34263B818A39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
