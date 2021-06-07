@@ -1,12 +1,12 @@
 # Going Medieval Mod Launcher
 This project allows the loading of mods within Going Medieval.
 
-The currently supported version is 0.5.28.4
+The currently supported version is 0.5.28.6
 
 ## Features
 - load C# based mods into Going Medieval
 - replace / patch methods within the going medieval API
-- integrate custom logic into the game
+- No manual file editing / hacking - the games files / data don't get touched at all
 
 ### Currently integrated mods
 - BugReport-Disabler: Disables the bug-reporting so there are no error-popups while experimenting

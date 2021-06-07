@@ -1,15 +1,17 @@
 ﻿using System;
+using GoingMedievalModLauncher;
 using HarmonyLib;
 using NSMedieval.Tools;
-using NSMedieval.Tools.BugReporting;
 using NSMedieval.Tools.Debug;
 using UnityEngine;
+using Logger = GoingMedievalModLauncher.Logger;
 
-namespace GoingMedievalModLauncher
+namespace BugReportDisabler
 {
-    public class BugReportDisabler : IPlugin
+    
+    public class BugReportDisablerPlugin : IPlugin
     {
-
+        
         public string Name => "Bug-Report Disabler";
         public string Version => "v0.0.1";
 
@@ -20,6 +22,7 @@ namespace GoingMedievalModLauncher
 
         public void start(MonoBehaviour root)
         {
+            
             try
             {
                 // disable the bug reporter
@@ -39,6 +42,7 @@ namespace GoingMedievalModLauncher
                 Logger.getInstance().info(e.ToString());
                 throw;
             }
+            
         }
 
         public void update(MonoBehaviour root)
@@ -47,4 +51,5 @@ namespace GoingMedievalModLauncher
         }
         
     }
+    
 }

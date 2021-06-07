@@ -45,19 +45,7 @@ namespace GoingMedievalModLauncher
                     // create a gameObject which we can use as a root reference to the scene-graph
                     var modLoaderObject = new GameObject {name = "ModLoader"};
                     modLoaderObject.AddComponent<EngineLauncher>();
-
-                    /*
-                    // attach the mods to the mod-loader object and attach them to the engines lifecycle
-                    reportDisabler.transform.SetParent(modLoaderObject.transform);
-                    consoleEnabler.transform.SetParent(modLoaderObject.transform);
-                    */
                     
-                    /*
-                    Logger.getInstance().info("Loaded plugin: "
-                                              + pluginComponent.pluginImpl.Name + " - "
-                                              + pluginComponent.pluginImpl.Version);
-                    */
-
                     // print out a nice little confirmation message that the plugin has been loaded
                     Logger.getInstance().info("... initialization thread has been finished!");
                 }

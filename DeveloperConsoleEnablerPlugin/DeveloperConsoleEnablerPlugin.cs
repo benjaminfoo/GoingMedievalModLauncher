@@ -1,11 +1,12 @@
-﻿using HarmonyLib;
+﻿using GoingMedievalModLauncher;
+using HarmonyLib;
 using NSEipix.Base;
 using NSMedieval.DevConsole;
 using UnityEngine;
 
-namespace GoingMedievalModLauncher
+namespace DeveloperConsoleEnablerPlugin
 {
-    public class DevConsole : IPlugin
+    public class DeveloperConsoleEnablerPlugin : IPlugin
     {
 
         public string Name => "Developer-Console enabler";
@@ -41,5 +42,4 @@ namespace GoingMedievalModLauncher
         }
         
     }
-    
 }

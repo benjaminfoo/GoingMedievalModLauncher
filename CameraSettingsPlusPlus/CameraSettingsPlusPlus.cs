@@ -1,27 +1,23 @@
 ﻿using System;
+using GoingMedievalModLauncher;
 using HarmonyLib;
 using NSMedieval;
-using NSMedieval.Tools;
-using NSMedieval.Tools.BugReporting;
-using NSMedieval.Tools.Debug;
 using UnityEngine;
+using Logger = GoingMedievalModLauncher.Logger;
 
-namespace GoingMedievalModLauncher
+namespace CameraSettingsPlusPlus
 {
-    public class CameraSettings : IPlugin
+    public class CameraSettingsPlusPlus : IPlugin
     {
-
         public string Name => "Camera-Settings";
         public string Version => "v0.0.1";
 
         public void initialize()
         {
-
         }
 
         public void start(MonoBehaviour root)
         {
-
         }
 
         public void update(MonoBehaviour root)
@@ -33,13 +29,11 @@ namespace GoingMedievalModLauncher
                 {
                     RenderSettings.fog = false;
                     Camera.main.farClipPlane = 99999;
-                    
-                    var traverse = Traverse.Create(cc.Settings);
-                    
-                    traverse.Field("heightRange").Field("max").SetValue(999999f);    
-                }
 
-                
+                    var traverse = Traverse.Create(cc.Settings);
+
+                    traverse.Field("heightRange").Field("max").SetValue(999999f);
+                }
             }
             catch (Exception e)
             {
@@ -47,6 +41,5 @@ namespace GoingMedievalModLauncher
                 throw;
             }
         }
-        
     }
 }
