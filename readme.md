@@ -1,3 +1,5 @@
+<img src="docs/banner.png">  
+
 # Going Medieval - Mod Launcher
 This project allows the loading of mods within Going Medieval.
 
@@ -31,6 +33,8 @@ Download the latest release and drop it into your going medieval folder
 
 ### Developing a custom mod / plugin
 _Note: The terms mod, plugin and assembly are used interchangeably - in the context of this project they mean the same thing._
+
+TODO :)
 
 ### Procedure
 The following procedure is executed when using the mod-loader:
