@@ -14,14 +14,17 @@ The following features are supported by the Mod Launcher:
 
 ### Mods
 The following mods are realized by using the Plugin-API
-- [/BugReportDisablerPlugin](BugReportDisablerPlugin)BugReport-Disabler: Disables the bug-reporting so there are no error-popups while experimenting
-- DevConsole-Enable: Enables the Developer-Console by using K to open and L to close
-- Camera-Settings: Allows (almost) unlimited zoom for the user-camera 
+- [BugReportDisablerPlugin](BugReportDisablerPlugin) Disables the bug-reporting feature & ui so there are no error-popups while experimenting
+- [CameraSettingsPlusPlus](CameraSettingsPlusPlus) Allows (almost) unlimited zoom for the user-camera
+- [DeveloperConsoleEnablerPlugin](DeveloperConsoleEnablerPlugin) Enables the Developer-Console by using L to open and K to close the UI 
 
 ## Installation:
 Download the latest release and drop it into your going medieval folder
 
 ## Technical
+
+### Developing a custom mod / plugin
+_Note: The terms mod, plugin and assembly are used interchangeably - in the context of this project they mean the same thing._
 
 ### Procedure
 The following procedure is executed when using the mod-loader:
