@@ -13,10 +13,16 @@ The following features are supported by the Mod Launcher:
  - Unity related logging within the 'output_log' file
 
 ### Mods
-The following mods are realized by using the Plugin-API
-- [BugReportDisablerPlugin](BugReportDisablerPlugin) Disables the bug-reporting feature & ui so there are no error-popups while experimenting
-- [CameraSettingsPlusPlus](CameraSettingsPlusPlus) Allows (almost) unlimited zoom for the user-camera
-- [DeveloperConsoleEnablerPlugin](DeveloperConsoleEnablerPlugin) Enables the Developer-Console by using L to open and K to close the UI 
+The following mods are realized by using the Plugin-API\
+
+[BugReportDisablerPlugin](BugReportDisabler-Plugin)\
+Disables the bug-reporting feature & ui so there are no error-popups while experimenting
+
+[CameraSettingsPlusPlus](CameraSettingsPlusPlus-Plugin)\
+Allows (almost) unlimited zoom for the user-camera
+
+[DeveloperConsoleEnablerPlugin](DeveloperConsoleEnabler-Plugin)\
+Enables the Developer-Console by using L to open and K to close the UI 
 
 ## Installation:
 Download the latest release and drop it into your going medieval folder
