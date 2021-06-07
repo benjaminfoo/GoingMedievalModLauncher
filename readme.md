@@ -4,12 +4,17 @@ This project allows the loading of mods within Going Medieval.
 The currently supported version is <= 0.5.28.6.
 
 ## Features
-- load C# based mods using a simple API
-- replace / patch methods within the going medieval API using Harmony
+The following features are supported by the Mod Launcher:
+- load C# based mods using a simple Plugin-API
+- replace / patch methods within the Going Medieval API using Harmony
 - No manual editing / hacking of files - the games files don't get modified 
+- Logging
+ - ModLauncher / Plugin related logging within the 'mod_launcher.log' file
+ - Unity related logging within the 'output_log' file
 
-### Currently integrated mods
-- BugReport-Disabler: Disables the bug-reporting so there are no error-popups while experimenting
+### Mods
+The following mods are realized by using the Plugin-API
+- [/BugReportDisablerPlugin](BugReportDisablerPlugin)BugReport-Disabler: Disables the bug-reporting so there are no error-popups while experimenting
 - DevConsole-Enable: Enables the Developer-Console by using K to open and L to close
 - Camera-Settings: Allows (almost) unlimited zoom for the user-camera 
 
