@@ -13,15 +13,19 @@ namespace BugReportDisabler
     {
         
         public string Name => "Bug-Report Disabler";
-        public string Version => "v0.0.1";
+
+        public string Description => "Manages the state of the Bug-Report Manager";
+        public string Version => "v0.0.2";
+        public bool activeState { get; set; }
 
         public void initialize()
         {
-
+            activeState = true;
         }
 
         public void start(MonoBehaviour root)
         {
+            if(!activeState) return;
             
             try
             {
@@ -31,11 +35,7 @@ namespace BugReportDisabler
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(true);
                 
-                // update the game version to indicate this is a modded version
-                var gameVersion = UnityEngine.GameObject.FindObjectOfType<GameVersion>();
-                var t = Traverse.Create(gameVersion);
-                t.Field("suffix").SetValue(" - mods active");
-                t.Method("Start").GetValue();
+                // TODO: GameSettings.sendAutoReports should also be interesting for this
             }
             catch (Exception e)
             {
@@ -49,7 +49,26 @@ namespace BugReportDisabler
         {
 
         }
-        
+
+        public void unload(MonoBehaviour root)
+        {
+                        
+            try
+            {
+                // disable the bug reporter
+                Logger.getInstance().info("Disabling error reports ...");
+                
+                var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
+                Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(false);
+                
+                // TODO: GameSettings.sendAutoReports should also be interesting for this
+            }
+            catch (Exception e)
+            {
+                Logger.getInstance().info(e.ToString());
+                throw;
+            }
+        }
     }
     
 }

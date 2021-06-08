@@ -1,4 +1,8 @@
 ﻿using System;
+using GoingMedievalModLauncher.ui;
+using HarmonyLib;
+using NSMedieval.Tools;
+using NSMedieval.Tools.BugReporting;
 using UnityEngine;
 
 namespace GoingMedievalModLauncher
@@ -7,6 +11,12 @@ namespace GoingMedievalModLauncher
     {
         public void Start()
         {
+            
+            // update the game version to indicate this is a modded version
+            var gameVersion = UnityEngine.GameObject.FindObjectOfType<GameVersion>();
+            var t = Traverse.Create(gameVersion);
+            t.Field("suffix").SetValue(" - mods active");
+            t.Method("Start").GetValue();
             
             // dont destroy the engines object when loading another scene, etc.
             DontDestroyOnLoad(this);
@@ -23,7 +33,12 @@ namespace GoingMedievalModLauncher
                 PluginComponent pluginComponent = this.gameObject.AddComponent<PluginComponent>();
                 pluginComponent.setup(loadedPlugin);
             }
+
+            Logger.getInstance().info("Showing mod-manager window...");
+            var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
             
         }
+        
     }
+    
 }

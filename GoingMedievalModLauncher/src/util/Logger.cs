@@ -35,5 +35,6 @@ namespace GoingMedievalModLauncher
             File.AppendAllText(Path.Combine(LOG_PATH, LOG_FILE), LOG_TAG + ":"+ "\t" + message + Environment.NewLine);
         }
 
+
     }
 }

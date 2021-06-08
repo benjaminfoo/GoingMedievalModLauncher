@@ -41,6 +41,10 @@
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
+        <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\UnityEngine.dll</HintPath>
           <Private>False</Private>
@@ -61,6 +65,14 @@
           <HintPath>C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\UnityEngine.InputModule.dll</HintPath>
           <Private>False</Private>
         </Reference>
+        <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\UnityEngine.UI.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIElementsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
         <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\UnityEngine.UIModule.dll</HintPath>
           <Private>False</Private>
@@ -73,6 +85,9 @@
         <Compile Include="src\plugins\IPlugin.cs" />
         <Compile Include="src\plugins\PluginComponent.cs" />
         <Compile Include="src\plugins\PluginManager.cs" />
+        <Compile Include="src\ui\ModManagerLogWindow.cs" />
+        <Compile Include="src\ui\ModManagerWindow.cs" />
+        <Compile Include="src\ui\UIWindow.cs" />
         <Compile Include="src\util\Logger.cs" />
     </ItemGroup>
     <ItemGroup>

@@ -8,6 +8,7 @@ The currently supported version is <= 0.5.28.6.
 ## Features
 The following features are supported by the Mod Launcher:
 - load C# based mods using a simple Plugin-API
+- acces all the APIs used in Going Medieval & Unity
 - replace / patch methods within the Going Medieval API using Harmony
 - No manual editing / hacking of files - the games files don't get modified 
 - Logging
