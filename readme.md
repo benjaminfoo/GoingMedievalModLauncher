@@ -57,7 +57,7 @@ The following libraries are referenced when compiling the mod loader and the con
 - UnityEngine.UIModule
 
 ## Additional
-- Unity-Doortstop for injecting code: https://github.com/NeighTools/UnityDoorstop
+- Unity-Doorstop for injecting code: https://github.com/NeighTools/UnityDoorstop
 - Harmony for runtime patching of code: https://harmony.pardeike.net/
 
 

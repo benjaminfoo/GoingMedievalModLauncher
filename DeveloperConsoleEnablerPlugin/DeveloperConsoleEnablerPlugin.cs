@@ -48,7 +48,7 @@ namespace DeveloperConsoleEnablerPlugin
             }
         }
 
-        public void unload(MonoBehaviour root)
+        public void disable(MonoBehaviour root)
         {
             activeState = false; 
             var dtools = Traverse.Create(MonoSingleton<DeveloperToolsView>.Instance);

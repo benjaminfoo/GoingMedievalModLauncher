@@ -33,23 +33,8 @@ namespace GoingMedievalModLauncher.ui
             logOutput.Append(File.ReadAllText(this.fileName));
         }
 
-        void OnGUI()
+        public override void renderContent()
         {
-            if (shown)
-            {
-                GUI.backgroundColor = Color.black;
-
-                // Register the window. We create two windows that use the same function
-                // Notice that their IDs differ
-                windowRect = GUI.Window(windowId, windowRect, renderWindow, windowTitle);
-            }
-        }
-
-
-        public void renderWindow(int windowId)
-        {
-            // we HAVE to call this in order to call the renderWindow function from the abstract base class
-            base.renderWindow(windowId);
             GUI.Label(new Rect(15, 30, windowRect.width - 10, windowRect.height - 10), logOutput.ToString());
 
             // Make the windows be draggable.

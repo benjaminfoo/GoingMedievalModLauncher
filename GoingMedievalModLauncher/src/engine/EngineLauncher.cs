@@ -1,12 +1,24 @@
 ﻿using System;
 using GoingMedievalModLauncher.ui;
 using HarmonyLib;
+using NSEipix.Base;
+using NSEipix.Model;
+using NSMedieval.Components.Base;
+using NSMedieval.Construction;
+using NSMedieval.Dictionary;
+using NSMedieval.Enums;
+using NSMedieval.StatsSystem;
 using NSMedieval.Tools;
 using NSMedieval.Tools.BugReporting;
+using NSMedieval.Types;
 using UnityEngine;
 
 namespace GoingMedievalModLauncher
 {
+    // The EngineLauncher is the bridge from outside to the inside of the unity-process (where gm resides).
+    
+    // The EngineLauncher gets loads any provided mod from the /mods directory and instantiates the lifecycle of each
+    // plugin within the unity-engine.
     public class EngineLauncher : MonoBehaviour
     {
         public void Start()
@@ -34,9 +46,11 @@ namespace GoingMedievalModLauncher
                 pluginComponent.setup(loadedPlugin);
             }
 
+            // Show a fancy ui to display and control every loaded mod at runtime
             Logger.getInstance().info("Showing mod-manager window...");
             var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
-            
+
+
         }
         
     }

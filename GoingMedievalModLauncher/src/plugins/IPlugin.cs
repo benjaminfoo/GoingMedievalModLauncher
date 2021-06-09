@@ -31,9 +31,10 @@ namespace GoingMedievalModLauncher
         void update(MonoBehaviour root);
 
         /* 
-         * The unload-method is called by the user or at the end of the game (quitting the application)
+         * The disable-method is called by the user or at the end of the game (quitting the application)
+         * This can be used for final operations before the application gets shutdown.
          */
-        void unload(MonoBehaviour root);
+        void disable(MonoBehaviour root);
 
     }
 }

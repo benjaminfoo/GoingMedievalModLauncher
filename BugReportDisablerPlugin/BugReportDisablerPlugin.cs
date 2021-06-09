@@ -50,7 +50,7 @@ namespace BugReportDisabler
 
         }
 
-        public void unload(MonoBehaviour root)
+        public void disable(MonoBehaviour root)
         {
                         
             try
