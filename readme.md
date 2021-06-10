@@ -18,13 +18,13 @@ The following features are supported by the Mod Launcher:
 ### Mods
 The following mods are realized by using the Plugin-API\
 
-[BugReportDisablerPlugin](github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/BugReportDisablerPlugin)\
+[BugReportDisablerPlugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/BugReportDisablerPlugin)\
 Disables the bug-reporting feature & ui so there are no error-popups while experimenting
 
-[CameraSettingsPlusPlus](github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/CameraSettingsPlusPlus)\
+[CameraSettingsPlusPlus](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/CameraSettingsPlusPlus)\
 Allows (almost) unlimited zoom for the user-camera
 
-[DeveloperConsoleEnablerPlugin](github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/DeveloperConsoleEnablerPlugin)\
+[DeveloperConsoleEnablerPlugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/DeveloperConsoleEnablerPlugin)\
 Enables the Developer-Console by using L to open and K to close the UI 
 
 ## Installation:
