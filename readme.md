@@ -7,7 +7,7 @@ The currently supported version is 0.5.28.6.
 
 ## Features
 The following features are supported by the Mod Launcher:
-- load C# based mods using a simple Plugin-API
+- load C# based mods using a simple [Plugin-API](https://github.com/benjaminfoo/GoingMedievalModLauncher/blob/main/GoingMedievalModLauncher/src/plugins/IPlugin.cs)
 - access the native unity API / runtime
 - replace / patch methods by using [Harmony](https://harmony.pardeike.net/)
 - No manual editing / hacking of files - the games files don't get modified 
@@ -18,13 +18,13 @@ The following features are supported by the Mod Launcher:
 ### Mods
 The following mods are realized by using the Plugin-API\
 
-[BugReportDisablerPlugin](github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/BugReportDisablerPlugin)\
+[BugReportDisablerPlugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/BugReportDisablerPlugin)\
 Disables the bug-reporting feature & ui so there are no error-popups while experimenting
 
-[CameraSettingsPlusPlus](github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/CameraSettingsPlusPlus)\
+[CameraSettingsPlusPlus](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/CameraSettingsPlusPlus)\
 Allows (almost) unlimited zoom for the user-camera
 
-[DeveloperConsoleEnablerPlugin](github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/DeveloperConsoleEnablerPlugin)\
+[DeveloperConsoleEnablerPlugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/DeveloperConsoleEnablerPlugin)\
 Enables the Developer-Console by using L to open and K to close the UI 
 
 ## Installation:
