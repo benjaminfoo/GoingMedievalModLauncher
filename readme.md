@@ -18,14 +18,17 @@ The following features are supported by the Mod Launcher:
 ### Mods
 The following mods are realized by using the Plugin-API\
 
-[BugReportDisablerPlugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/BugReportDisablerPlugin)\
-Disables the bug-reporting feature & ui so there are no error-popups while experimenting
+[Additional Map Sizes - Plugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/AdditionalMapSizesPlugin)\
+A simple mod which adds different map sizes to the new game - map size dropdown.
 
-[CameraSettingsPlusPlus](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/CameraSettingsPlusPlus)\
-Allows (almost) unlimited zoom for the user-camera
+[BugReport Disabler - Plugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/BugReportDisablerPlugin)\
+Disables the bug-reporting feature & ui so there are no error-popups while experimenting.
 
-[DeveloperConsoleEnablerPlugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/DeveloperConsoleEnablerPlugin)\
-Enables the Developer-Console by using L to open and K to close the UI 
+[CameraSettings++ - Plugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/CameraSettingsPlusPlus)\
+Increases rendering-, zoom- & shadow-distance - may slow down performance.
+
+[DeveloperConsole Enabler - Plugin](https://github.com/benjaminfoo/GoingMedievalModLauncher/tree/main/DeveloperConsoleEnablerPlugin)\
+Enables the Developer-Console by using L to open and K to close the UI.
 
 ## Installation:
 Download the latest release and drop it into your going medieval folder
