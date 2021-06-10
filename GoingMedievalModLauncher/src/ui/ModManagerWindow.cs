@@ -16,6 +16,7 @@ using NSMedieval.Model;
 using NSMedieval.Model.MapNew;
 using NSMedieval.Repository;
 using NSMedieval.Sound;
+using NSMedieval.StatsSystem;
 using NSMedieval.Tools;
 using NSMedieval.Tools.Debug;
 using NSMedieval.Types;
@@ -30,6 +31,9 @@ namespace GoingMedievalModLauncher.ui
 {
     public class ModManagerWindow : UIWindow
     {
+
+        private static GUIStyle bigFontSizeStyle = new GUIStyle();
+        
         public ModManagerWindow()
         {
             // BlackBarMessageController.Instance.ShowClickableBlackBarMessage("Hello World!", Vector3.one);
@@ -39,8 +43,12 @@ namespace GoingMedievalModLauncher.ui
         {
             this.windowTitle = "Going Medieval - Mod Manager";
             this.windowId = 1;
-            this.windowRect = new Rect(10, 10, 600, 300);
+            this.windowRect = new Rect(10, 10, 800, 600);
             this.shown = true;
+
+            bigFontSizeStyle.fontSize = 16;
+            bigFontSizeStyle.normal.textColor = Color.white;
+            
         }
 
         private void Update()
@@ -56,37 +64,54 @@ namespace GoingMedievalModLauncher.ui
 
         public override void renderContent()
         {
-            int index = 1;
-            int offsetY = 30;
+
+            // render a table-like structure
+            int index = 0;
+            int sizePerRow = 60;
+            
+            // setup the scrollView dimensions based on the amount of loaded mods
+            scrollViewRect.Set(1,20, windowRect.width-4, windowRect.height-2);
+            scrollContentMaxSize.Set(0,0, windowRect.width, 
+                height: 150 + (PluginManager.getInstance().GetPlugins().Count * sizePerRow)    
+            );
+            
+            // Toggle the visibility of the mod-loader log
+            if (GUI.Button(new Rect(10, 10, 100, 20), "Mod-Log"))
+            {
+                var modManagerLogWindow = gameObject.GetComponent<ModManagerLogWindow>();
+
+                if (modManagerLogWindow == null) gameObject.AddComponent<ModManagerLogWindow>();
+
+                modManagerLogWindow.shown = !modManagerLogWindow.shown;
+                
+                if(modManagerLogWindow.shown) modManagerLogWindow.setup("mod_launcher.log");
+            }
+            
+            // Render a simple note for using the mod-loader manager
+            Rect usageLabelRect = new Rect(150, 10, 250, 30);
+            GUI.Label(usageLabelRect, "Toggle the Mod-Manager with F1.", bigFontSizeStyle);
+            
+            // draw a line below the mod-log button and usage-note
+            drawRect(new Rect(0, 40, windowRect.width , 2), lineColor );
             
             // render a row per mod on the manager ui
             foreach (var plugin in PluginManager.getInstance().GetPlugins())
             {
                 // setup the positions for labels
-                var nameLabelRect = new Rect(10, 40 + (index * offsetY), 150, 20);
-                var versionLabelRect = new Rect(350, 40 + (index * offsetY), 100, 20);
-                var descriptionLabelRect = new Rect(150, 40 + (index * offsetY), 190, 20);
+                var y = 50 + (index * sizePerRow);
+                var nameLabelRect = new Rect(10, y, 300, 20);
+                var descriptionLabelRect = new Rect(10, y + 14, windowRect.width - 150, 40);
 
                 // render the labels name, description and version of a mod
-                GUI.Label(nameLabelRect, plugin.Name);
+                GUI.Label(nameLabelRect, plugin.Name + ", " + plugin.Version, bigFontSizeStyle);
                 GUI.Label(descriptionLabelRect, plugin.Description);
-                GUI.Label(versionLabelRect, plugin.Version);
-
 
                 // setup a toggle-state button for enabling / disabling a mod
-                var enableButtonRect = new Rect(450, 40 + (index * offsetY), 100, 20);
-                string buttonCaption = String.Empty;
-                if (plugin.activeState)
-                {
-                    buttonCaption = "Enabled";
-                    GUI.contentColor = Color.green;
-                }
-                else
-                {
-                    buttonCaption = "Disabled";
-                    GUI.contentColor = Color.red;
-                }
+                var enableButtonRect = new Rect(windowRect.width - 150, y, 100, 40);
+                string buttonCaption = plugin.activeState ? "Enabled" : "Disabled";
+                GUI.contentColor = plugin.activeState ? Color.green : Color.red;
 
+                // Setup the toggle-state button
                 if (GUI.Button(enableButtonRect, buttonCaption))
                 {
                     // toggle the state of the plugin by toggling it
@@ -94,6 +119,7 @@ namespace GoingMedievalModLauncher.ui
                     
                     if (plugin.activeState)
                     {
+                        Logger.getInstance().info("Enabling plugin \"" + plugin.Name + "\" ...");
                         plugin.initialize();
                         plugin.start(this);
                         
@@ -101,37 +127,54 @@ namespace GoingMedievalModLauncher.ui
                     }
                     else
                     {
+                        Logger.getInstance().info("Disabling plugin \"" + plugin.Name + "\" ...");
+
                         plugin.disable(this);
                         plugin.activeState = false;
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOff");
                     }
                 }
-
+                
+                // revert the style to anything before
                 GUI.contentColor = Color.white;
-
+                
                 index++;
+                
+                // draw a line below every entry
+                drawRect(new Rect(0,40 + index * sizePerRow, windowRect.width, 2), lineColor );
             }
-
-            // Toggle the visibility of the mod-loader log
-            if (GUI.Button(new Rect(10, 30, 100, 20), "Mod-Log"))
-            {
-                if (gameObject.GetComponent<ModManagerLogWindow>() != null)
-                {
-                    Destroy(gameObject.GetComponent<ModManagerLogWindow>());
-                }
-                else
-                {
-                    gameObject.AddComponent<ModManagerLogWindow>().setup("mod_launcher.log");
-                }
-            }
-            
-            // Render a simple note for using the mod-loader manager
-            Rect usageLabelRect = new Rect(10, windowRect.height - 40, 200, 40);
-            GUI.Label(usageLabelRect, "Toggle the Mod-Manager with F1.");
-            
+ 
             // Make the windows be draggable.
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
             
+        }
+    
+        // this is required for drawing labels without adding additional assets 
+        private static Texture2D staticRectTexture;
+        private static GUIStyle staticRectStyle;
+        private static Color lineColor = Color.black;
+ 
+        // Note that this function is only meant to be called from OnGUI() functions.
+        public static void drawRect( Rect position, Color color )
+        {
+            if( staticRectTexture == null )
+            {
+                staticRectTexture = new Texture2D( 1, 1 );
+            }
+ 
+            if( staticRectStyle == null )
+            {
+                staticRectStyle = new GUIStyle();
+            }
+ 
+            staticRectTexture.SetPixel( 0, 0, color );
+            staticRectTexture.Apply();
+ 
+            staticRectStyle.normal.background = staticRectTexture;
+ 
+            GUI.Box( position, GUIContent.none, staticRectStyle );
+ 
+ 
         }
         
     }

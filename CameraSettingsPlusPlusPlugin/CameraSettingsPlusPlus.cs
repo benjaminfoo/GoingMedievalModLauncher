@@ -1,6 +1,7 @@
 ﻿using System;
 using GoingMedievalModLauncher;
 using HarmonyLib;
+using NSEipix.Base;
 using NSMedieval;
 using UnityEngine;
 using Logger = GoingMedievalModLauncher.Logger;
@@ -11,7 +12,7 @@ namespace CameraSettingsPlusPlus
     {
         public string Name => "Camera-Settings";
         
-        public string Description => "Manages the state of RTS-Camera";
+        public string Description => "Increases rendering-, zoom- & shadow-distance - may slow down performance.";
         public string Version => "v0.0.2";
         
         public bool activeState { get; set; }
@@ -43,13 +44,16 @@ namespace CameraSettingsPlusPlus
                     
                     // backup the original far clip plane value
                     Camera.main.farClipPlane = 99999;
+                    QualitySettings.shadowDistance = 2048;
 
                     var traverse = Traverse.Create(cc.Settings);
     
                     // backup the original far clip plane value
                     originalHeightRangeMaxValue = 90; 
                     
-                    traverse.Field("heightRange").Field("max").SetValue(999999f);
+                    traverse.Field("heightRange").Field("max").SetValue(999f);
+                    traverse.Field("camSensitivity").SetValue(100f);
+                    
                 }
             }
             catch (Exception e)
@@ -57,6 +61,7 @@ namespace CameraSettingsPlusPlus
                 Logger.getInstance().info(e.ToString());
                 throw;
             }
+            
         }
 
         public void disable(MonoBehaviour root)

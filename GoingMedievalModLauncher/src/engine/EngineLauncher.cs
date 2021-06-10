@@ -3,15 +3,20 @@ using GoingMedievalModLauncher.ui;
 using HarmonyLib;
 using NSEipix.Base;
 using NSEipix.Model;
+using NSEipix.ObjectMapper;
+using NSMedieval;
 using NSMedieval.Components.Base;
 using NSMedieval.Construction;
 using NSMedieval.Dictionary;
 using NSMedieval.Enums;
+using NSMedieval.Model.MapNew;
+using NSMedieval.Repository;
 using NSMedieval.StatsSystem;
 using NSMedieval.Tools;
 using NSMedieval.Tools.BugReporting;
 using NSMedieval.Types;
 using UnityEngine;
+using Object = System.Object;
 
 namespace GoingMedievalModLauncher
 {
@@ -49,7 +54,6 @@ namespace GoingMedievalModLauncher
             // Show a fancy ui to display and control every loaded mod at runtime
             Logger.getInstance().info("Showing mod-manager window...");
             var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
-
 
         }
         

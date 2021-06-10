@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CameraSettingsPlusPlus")]
+[assembly: AssemblyTitle("AdditionalMapSizesPlugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CameraSettingsPlusPlus")]
+[assembly: AssemblyProduct("AdditionalMapSizesPlugin")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6A832903-46EF-44D2-887B-1163155404D1")]
+[assembly: Guid("E4B8324F-9744-441D-A1CD-D3D74594EFEC")]
 
 // Version information for an assembly consists of the following four values:
 //

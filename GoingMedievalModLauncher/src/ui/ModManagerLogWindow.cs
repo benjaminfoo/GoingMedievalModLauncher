@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -35,6 +36,11 @@ namespace GoingMedievalModLauncher.ui
 
         public override void renderContent()
         {
+            
+            // setup the scrollView dimensions based on the amount of loaded mods
+            scrollViewRect.Set(1,20, windowRect.width-4, windowRect.height-2);
+            scrollContentMaxSize.Set(0,0, windowRect.width, 9999);
+            
             GUI.Label(new Rect(15, 30, windowRect.width - 10, windowRect.height - 10), logOutput.ToString());
 
             // Make the windows be draggable.

@@ -31,12 +31,12 @@ namespace GoingMedievalModLauncher.ui
 
         // the initial background color which is needed to draw every ui element, except the close button,
         // with a valid ui background
-        private static Color initialBackgroundColor = Color.clear;
+        public static Color initialBackgroundColor = Color.clear;
 
-        // Manage the scrollView - scroll(Bar)Position, scrollView-Size and the max sitz of the rendered content
+        // Manage the scrollView - scroll(Bar)Position, scrollView-Size and the max size of the rendered content
         private Vector2 scrollPosition = new Vector2();
-        private Rect scrollViewRect = new Rect();
-        private Rect scrollContentMaxSize = new Rect();
+        public Rect scrollViewRect = new Rect();
+        public Rect scrollContentMaxSize = new Rect();
         
         private void renderWindow(int windowId)
         {
@@ -57,13 +57,13 @@ namespace GoingMedievalModLauncher.ui
 
             GUI.backgroundColor = initialBackgroundColor;
 
-            // scroll view
-            scrollViewRect.Set(0,16, windowRect.width, windowRect.height);
-            scrollContentMaxSize.Set(0,0, windowRect.width, windowRect.height + 100);
-            scrollPosition = GUI.BeginScrollView (scrollViewRect, scrollPosition,  scrollContentMaxSize);   
-            
+            // enable the scroll view
+            scrollPosition = GUI.BeginScrollView (scrollViewRect, scrollPosition,  scrollContentMaxSize);
+
+            // draw the content of the inherited class
             renderContent();
             
+            // disable the scroll view rendering
             GUI.EndScrollView();
         }
         
