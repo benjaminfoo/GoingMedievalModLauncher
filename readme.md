@@ -35,29 +35,7 @@ Download the latest release and drop it into your going medieval folder
 
 ## Technical
 
-### Developing a custom mod / plugin
-_Note: The terms mod, plugin and assembly are used interchangeably - in the context of this project they mean the same thing._
-
-TODO :)
-
-### Procedure
-The following procedure is executed when using the mod-loader:
-- winhttp.dll is used to inject code during runtime into the unity process
-- doorstop_config.ini is a key-value file which controls the initialization of the injection process
-- winhttp.dll then launches the code defined in Launcher.cs which contains a Main-Method
-
-### Used libraries
-The following libraries are referenced when compiling the mod loader and the contained mods:
-- 0Harmony
-- Assembly-CSharp
-- System
-- System.Core
-- UnityEngine
-- UnityEngine.CoreModule
-- UnityEngine.IMGUIModule
-- UnityEngine.InputLegacyModule
-- UnityEngine.InputModule
-- UnityEngine.UIModule
+For technical information checkout the [wiki](https://github.com/benjaminfoo/GoingMedievalModLauncher/wiki/Technical) at the github-page. 
 
 ## Additional
 - Unity-Doorstop for injecting code: https://github.com/NeighTools/UnityDoorstop
