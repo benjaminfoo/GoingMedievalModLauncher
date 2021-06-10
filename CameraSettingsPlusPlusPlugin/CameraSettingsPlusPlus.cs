@@ -58,7 +58,7 @@ namespace CameraSettingsPlusPlus
             }
             catch (Exception e)
             {
-                Logger.getInstance().info(e.ToString());
+                Logger.Instance.info(e.ToString());
                 throw;
             }
             
@@ -81,7 +81,7 @@ namespace CameraSettingsPlusPlus
             }
             catch (Exception e)
             {
-                Logger.getInstance().info(e.ToString());
+                Logger.Instance.info(e.ToString());
                 throw;
             }
 

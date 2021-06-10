@@ -1,6 +1,5 @@
-﻿using System;
-using NSMedieval.StatsSystem;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace GoingMedievalModLauncher.ui
 {
@@ -12,7 +11,7 @@ namespace GoingMedievalModLauncher.ui
      * For rendering custom content inside a window, override the renderWindow method,
      * remember to call base.renderWindow() from the parent class.
      */
-    public abstract class UIWindow : MonoBehaviour
+    public abstract class UIWindow : UIBehaviour
     {
         // an numeric value which is used to identify / differntiate between all windows 
         public int windowId;
@@ -37,7 +36,12 @@ namespace GoingMedievalModLauncher.ui
         private Vector2 scrollPosition = new Vector2();
         public Rect scrollViewRect = new Rect();
         public Rect scrollContentMaxSize = new Rect();
-        
+
+        private void Awake()
+        {
+            gameObject.AddComponent<RectTransform>();
+        }
+
         private void renderWindow(int windowId)
         {
             

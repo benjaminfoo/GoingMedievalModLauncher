@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using NSEipix.Base;
 using UnityEngine;
 
 namespace GoingMedievalModLauncher
 {
-    public class PluginManager
+    public class PluginManager : Singleton<PluginManager>
     {
-        private static PluginManager instance;
 
         private ICollection<IPlugin> plugins;
 
@@ -23,16 +23,6 @@ namespace GoingMedievalModLauncher
             return plugins;
         }
 
-        public static PluginManager getInstance()
-        {
-            if (instance == null)
-            {
-                instance = new PluginManager();
-            }
-
-            return instance;
-        }
-
         /**
          * Loads all assemblies by a given path
          */
@@ -40,13 +30,13 @@ namespace GoingMedievalModLauncher
         {
             // The directory where all assemblies / plugins / mods have to be stored
             DirectoryInfo dir = new DirectoryInfo(@"./mods");
-            Logger.getInstance().info("Looking for plugins in " + dir.FullName + " ...");
+            Logger.Instance.info("Looking for plugins in " + dir.FullName + " ...");
 
             // load all the assemblies from the directory
             ICollection<Assembly> assemblies = new List<Assembly>();
             foreach (FileInfo dllFile in dir.GetFiles("*.dll"))
             {
-                Logger.getInstance().info("Found dll: " + dllFile + " ...");
+                Logger.Instance.info("Found dll: " + dllFile + " ...");
                 AssemblyName an = AssemblyName.GetAssemblyName(dllFile.FullName);
                 Assembly assembly = Assembly.Load(an);
                 assemblies.Add(assembly);
@@ -87,7 +77,7 @@ namespace GoingMedievalModLauncher
                 IPlugin plugin = (IPlugin) Activator.CreateInstance(type);
                 plugins.Add(plugin);
 
-                Logger.getInstance().info("Initializing plugin: " + plugin.Name + " - " + plugin.Version);
+                Logger.Instance.info("Initializing plugin: " + plugin.Name + " - " + plugin.Version);
                 plugin.initialize();
                 
                 // TODO:  plugin.start(doorstepGameObject);

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using System.Text;
+using NSMedieval.Model;
+using NSMedieval.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace GoingMedievalModLauncher.ui
 {
     public class ModManagerLogWindow : UIWindow
     {
+
+        private static Sprite sp = Resources.GetBuiltinResource<Sprite>("frame_01");
         
         private StringBuilder logOutput = new StringBuilder();
 
@@ -22,16 +28,37 @@ namespace GoingMedievalModLauncher.ui
             logOutput.Append(File.ReadAllText(this.fileName));
         }
 
-        public void Start()
+        public new void Start()
         {
             this.windowTitle = "Going Medieval - Log";
             this.windowId = 2;
             this.windowRect = new Rect(20, 450, 800, 400);
-            this.shown = true;
-            
+
             // buildLog();
             logOutput.Clear();
             logOutput.Append(File.ReadAllText(this.fileName));
+            base.Start();
+
+
+            var manager = GameObject.FindObjectOfType<PromptPanelManager>();
+            var descf = typeof(PromptPanelManager).GetField("description", BindingFlags.Instance | BindingFlags
+            .NonPublic);
+            var desc = (MonoBehaviour) descf.GetValue(manager);
+            var components = desc.transform.parent.gameObject.GetComponents<MonoBehaviour>();
+            Logger.Instance.info("" + components);
+            Logger.Instance.info(sp.name);
+            foreach ( var component in components )
+            {
+                if ( component is Image i)
+                {
+                    Logger.Instance.info(i.sprite.texture.name);
+                }
+                else
+                {
+                    Logger.Instance.info(component.ToString());
+                }
+            }
+
         }
 
         public override void renderContent()
@@ -46,7 +73,7 @@ namespace GoingMedievalModLauncher.ui
             // Make the windows be draggable.
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
-
+        
 
         public void buildLog()
         {
@@ -73,7 +100,7 @@ namespace GoingMedievalModLauncher.ui
             logOutput.AppendLine();
 
             logOutput.Append("Current level: ");
-            logOutput.Append(Application.loadedLevelName);
+            logOutput.Append(SceneManager.GetActiveScene().name);
             logOutput.AppendLine();
 
             logOutput.Append("Mouse-Position: ");

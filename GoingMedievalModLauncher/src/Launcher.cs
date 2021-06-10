@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
+using GoingMedievalModLauncher.ui;
 using HarmonyLib;
+using NSEipix.Base;
 using NSMedieval.Tools.Debug;
+using NSMedieval.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,7 +33,7 @@ namespace GoingMedievalModLauncher
          */
         public static void startup(Scene arg0, LoadSceneMode arg1)
         {
-            Logger.getInstance().info("Initializing mod-loader!");
+            Logger.Instance.info("Initializing mod-loader!");
 
             if (startupFinished) return;
 
@@ -37,22 +41,32 @@ namespace GoingMedievalModLauncher
             {
                 try
                 {
+                    
+                    var harmony = new Harmony("com.modloader.nsmeadival");
+                    
+                    var orig = typeof(MainMenuView).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var post = typeof(MainMenuPatch).GetMethod("Start", BindingFlags.Static | BindingFlags.Public);
+                    harmony.Patch(orig, postfix: new HarmonyMethod(post));
+
+                    Singleton<PluginManager>.Instance.loadAssemblies();
+                    
                     // wait a short amount of time in order to let the game initialize itself
                     Thread.Sleep(2500);
+                   
 
-                    Logger.getInstance().info("Mod-loader thread is running ...");
+                    Logger.Instance.info("Mod-loader thread is running ...");
 
                     // create a gameObject which we can use as a root reference to the scene-graph
                     var modLoaderObject = new GameObject {name = "ModLoader"};
                     modLoaderObject.AddComponent<EngineLauncher>();
                     
                     // print out a nice little confirmation message that the plugin has been loaded
-                    Logger.getInstance().info("... initialization thread has been finished!");
+                    Logger.Instance.info("... initialization thread has been finished!");
                 }
                 catch (Exception e)
                 {
-                    Logger.getInstance().info("An error occured: \n");
-                    Logger.getInstance().info(e.ToString());
+                    Logger.Instance.info("An error occured: \n");
+                    Logger.Instance.info(e.ToString());
                     throw;
                 }
             }).Start();
