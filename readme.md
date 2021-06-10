@@ -1,6 +1,6 @@
 <img src="docs/banner.png">  
 
-# Going Medieval - Mod Launcher
+# Going Medieval - Mod Loader & Plugin-API
 This project allows the development and loading of mods for Going Medieval, written in C#.
 
 The currently supported version is 0.5.28.6.
