@@ -5,3 +5,9 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
+/ExperimentalMod
+/ExperimentalMod/
+/ExperimentalMod/*
+/ExperimentalMod/*/*
+/ExperimentalMod/*/*/*

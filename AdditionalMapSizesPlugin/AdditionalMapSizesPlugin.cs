@@ -32,11 +32,10 @@ namespace AdditionalMapSizesPlugin
 
         public void start(MonoBehaviour root)
         {
-
+            add(create("16 x 16 - DEV", 16, 16, 16, 3));
             add(create("128 x 128", 128, 16, 128, 3));
             add(create("256 x 256", 256, 16, 256, 3));
             add(create("512 x 512", 512, 16, 512, 3));
-            
         }
 
         public MapSize create(string name, int width, int height, int length, int blockHeight = 3)

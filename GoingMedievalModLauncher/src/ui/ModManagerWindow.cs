@@ -54,7 +54,7 @@ namespace GoingMedievalModLauncher.ui
         private void Update()
         {
             
-            if (Input.GetKeyDown(KeyCode.F1))
+            if (Input.GetKeyDown(KeyCode.F12))
             {
                 // toggle the visibility via key-press
                 shown = !shown;
@@ -89,7 +89,7 @@ namespace GoingMedievalModLauncher.ui
             
             // Render a simple note for using the mod-loader manager
             Rect usageLabelRect = new Rect(150, 10, 250, 30);
-            GUI.Label(usageLabelRect, "Toggle the Mod-Manager with F1.", bigFontSizeStyle);
+            GUI.Label(usageLabelRect, "Toggle the Mod-Manager with F12.", bigFontSizeStyle);
             
             // draw a line below the mod-log button and usage-note
             drawRect(new Rect(0, 40, windowRect.width , 2), lineColor );
