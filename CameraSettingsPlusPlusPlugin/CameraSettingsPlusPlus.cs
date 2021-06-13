@@ -23,6 +23,7 @@ namespace CameraSettingsPlusPlus
         public void initialize()
         {
             activeState = true;
+
         }
 
         public void start(MonoBehaviour root)
