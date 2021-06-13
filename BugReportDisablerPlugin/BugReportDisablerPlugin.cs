@@ -15,6 +15,7 @@ namespace BugReportDisabler
         public string Name => "Bug-Report Disabler";
 
         public string Description => "Disables the sending of error-reports.";
+        public string ID => "bugreport_begone";
         public string Version => "v0.0.2";
         public bool activeState { get; set; }
 

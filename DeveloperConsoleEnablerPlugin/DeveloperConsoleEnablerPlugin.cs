@@ -12,6 +12,7 @@ namespace DeveloperConsoleEnablerPlugin
 
         public string Name => "Developer-Console enabler";
         public string Description => "Enables the developer console.";
+        public string ID => "DevConsoleEnabler";
 
         public string Version => "v0.0.2";
         

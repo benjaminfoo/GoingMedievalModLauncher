@@ -11,6 +11,7 @@ namespace AdditionalMapSizesPlugin
     {
         public string Name => "Additional Map Sizes";
         public string Description => "Adds map sizes to the new-game map-selection screen.";
+        public string ID => "AdditionalMapSize";
         public string Version => "v0.0.1";
         public bool activeState { get; set; }
         public void initialize()

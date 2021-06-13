@@ -84,7 +84,11 @@ namespace GoingMedievalModLauncher
 				foreach ( var translation in node.Value )
 				{
 					var id = source.GetLanguageIndex(translation.Key);
-					var term = source.AddTerm(node.Key);
+					if ( id < 0 )
+					{
+						continue;
+					}
+					var term = source.AddTerm(plugin.ID + ":" + node.Key);
 					term.SetTranslation(id, translation.Value);
 				}
 			}
