@@ -13,6 +13,15 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005Cdev_005Csteam_005Csteamapps_005Ccommon_005CGoing_0020Medieval_005CGoing_0020Medieval_005FData_005CManaged_005CUnity_002ETextMeshPro_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CWorkspaces_005CGoingMedievalModLauncher_005CGoingMedievalModLauncher_005Clibs_005C0Harmony_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CWorkspaces_005CGoingMedievalModLauncher_005CGoingMedievalModLauncher_005Clibs_005C0Harmony_002Exml/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CAssembly_002DCSharp_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CUnityEngine_002ECoreModule_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CUnityEngine_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CUnityEngine_002EIMGUIModule_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CUnityEngine_002EInputLegacyModule_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CUnityEngine_002EInputModule_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CPrograms_005CGoingMedievalModLauncher_005Clibs_005CUnityEngine_002EUI_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\dev\steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\Assembly-CSharp.dll" /&gt;&#xD;
+  &lt;Assembly Path="E:\Programs\GoingMedievalModLauncher\GoingMedievalModLauncher\libs\0Harmony.dll" /&gt;&#xD;
+  &lt;Assembly Path="E:\Programs\GoingMedievalModLauncher\libs\Assembly-CSharp.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

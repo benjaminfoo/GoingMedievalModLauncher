@@ -37,8 +37,6 @@ namespace GoingMedievalModLauncher
             t.Field("suffix").SetValue(" - mods active");
             t.Method("Start").GetValue();
 
-            Logger.Instance.info("Start was patched with prefix");
-
             // dont destroy the engines object when loading another scene, etc.
             DontDestroyOnLoad(this);
 
@@ -52,7 +50,7 @@ namespace GoingMedievalModLauncher
             foreach (var loadedPlugin in loadedPlugins)
             {
                 PluginComponent pluginComponent = this.gameObject.AddComponent<PluginComponent>();
-                pluginComponent.setup(loadedPlugin);
+                pluginComponent.setup(loadedPlugin.plugin);
             }
 
             // Show a fancy ui to display and control every loaded mod at runtime

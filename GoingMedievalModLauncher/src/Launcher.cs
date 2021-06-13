@@ -44,9 +44,7 @@ namespace GoingMedievalModLauncher
                     
                     var harmony = new Harmony("com.modloader.nsmeadival");
                     
-                    var orig = typeof(MainMenuView).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
-                    var post = typeof(MainMenuPatch).GetMethod("Start", BindingFlags.Static | BindingFlags.Public);
-                    harmony.Patch(orig, postfix: new HarmonyMethod(post));
+                    MainMenuPatch.ApplyPatch(harmony);
 
                     Singleton<PluginManager>.Instance.loadAssemblies();
                     

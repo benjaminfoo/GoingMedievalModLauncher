@@ -73,7 +73,7 @@ namespace GoingMedievalModLauncher.ui
             drawRect(new Rect(0, 40, windowRect.width , 2), lineColor );
             
             // render a row per mod on the manager ui
-            foreach (var plugin in Singleton<PluginManager>.Instance.GetPlugins())
+            foreach (var pluginc in Singleton<PluginManager>.Instance.GetPlugins())
             {
                 // setup the positions for labels
                 var y = 50 + (index * sizePerRow);
@@ -81,34 +81,34 @@ namespace GoingMedievalModLauncher.ui
                 var descriptionLabelRect = new Rect(10, y + 14, windowRect.width - 150, 40);
 
                 // render the labels name, description and version of a mod
-                GUI.Label(nameLabelRect, plugin.Name + ", " + plugin.Version, bigFontSizeStyle);
-                GUI.Label(descriptionLabelRect, plugin.Description);
+                GUI.Label(nameLabelRect, pluginc.Name + ", " + pluginc.Version, bigFontSizeStyle);
+                GUI.Label(descriptionLabelRect, pluginc.Description);
 
                 // setup a toggle-state button for enabling / disabling a mod
                 var enableButtonRect = new Rect(windowRect.width - 150, y, 100, 40);
-                string buttonCaption = plugin.activeState ? "Enabled" : "Disabled";
-                GUI.contentColor = plugin.activeState ? Color.green : Color.red;
+                string buttonCaption = pluginc.activeState ? "Enabled" : "Disabled";
+                GUI.contentColor = pluginc.activeState ? Color.green : Color.red;
 
                 // Setup the toggle-state button
                 if (GUI.Button(enableButtonRect, buttonCaption))
                 {
                     // toggle the state of the plugin by toggling it
-                    plugin.activeState = !plugin.activeState;
+                    pluginc.activeState = !pluginc.activeState;
                     
-                    if (plugin.activeState)
+                    if (pluginc.activeState)
                     {
-                        Logger.Instance.info("Enabling plugin \"" + plugin.Name + "\" ...");
-                        plugin.initialize();
-                        plugin.start(this);
+                        Logger.Instance.info("Enabling plugin \"" + pluginc.Name + "\" ...");
+                        pluginc.plugin.initialize();
+                        pluginc.plugin.start(this);
                         
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOn");
                     }
                     else
                     {
-                        Logger.Instance.info("Disabling plugin \"" + plugin.Name + "\" ...");
+                        Logger.Instance.info("Disabling plugin \"" + pluginc.Name + "\" ...");
 
-                        plugin.disable(this);
-                        plugin.activeState = false;
+                        pluginc.plugin.disable(this);
+                        pluginc.activeState = false;
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOff");
                     }
                 }
