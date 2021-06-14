@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <Import Project="$(MSBuildProjectDirectory)\..\Props\common.props" 
+            Condition="Exists('$(MSBuildProjectDirectory)\..\Props\common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -17,7 +19,7 @@
         <DebugSymbols>false</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>D:\Games\Steam\steamapps\common\Going Medieval\mods</OutputPath>
+        <OutputPath>$(GameDir)\mods</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -26,7 +28,7 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>D:\Games\Steam\steamapps\common\Going Medieval\mods</OutputPath>
+        <OutputPath>$(GameDir)\mods</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -36,25 +38,28 @@
           <HintPath>libs\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\Assembly-CSharp.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\Newtonsoft.Json.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\UnityEngine.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\UnityEngine.CoreModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\UnityEngine.IMGUIModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\UnityEngine.InputLegacyModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\UnityEngine.InputModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.InputModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\libs\UnityEngine.UI.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.UI.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -63,8 +68,9 @@
         <Compile Include="src\Launcher.cs" />
         <Compile Include="src\plugins\IPlugin.cs" />
         <Compile Include="src\plugins\PluginComponent.cs" />
+        <Compile Include="src\plugins\PluginContainer.cs" />
         <Compile Include="src\plugins\PluginManager.cs" />
-        <Compile Include="src\ui\MainMennuPatch.cs" />
+        <Compile Include="src\ui\MainMenuPatch.cs" />
         <Compile Include="src\ui\ModManagerLogWindow.cs" />
         <Compile Include="src\ui\ModManagerWindow.cs" />
         <Compile Include="src\ui\PromptQueue.cs" />
