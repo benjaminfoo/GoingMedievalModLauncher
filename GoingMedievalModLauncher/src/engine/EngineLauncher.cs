@@ -1,26 +1,11 @@
 ﻿using System;
-using System.Reflection;
 using GoingMedievalModLauncher.ui;
 using HarmonyLib;
 using NSEipix.Base;
-using NSEipix.Model;
-using NSEipix.ObjectMapper;
-using NSMedieval;
-using NSMedieval.Components.Base;
-using NSMedieval.Construction;
-using NSMedieval.Dictionary;
-using NSMedieval.Enums;
-using NSMedieval.Model.MapNew;
-using NSMedieval.Repository;
-using NSMedieval.StatsSystem;
 using NSMedieval.Tools;
-using NSMedieval.Tools.BugReporting;
-using NSMedieval.Types;
-using NSMedieval.UI;
 using UnityEngine;
-using Object = System.Object;
 
-namespace GoingMedievalModLauncher
+namespace GoingMedievalModLauncher.Engine
 {
     // The EngineLauncher is the bridge from outside to the inside of the unity-process (where gm resides).
     
@@ -58,7 +43,7 @@ namespace GoingMedievalModLauncher
             var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
 
         }
-        
+
     }
     
 }

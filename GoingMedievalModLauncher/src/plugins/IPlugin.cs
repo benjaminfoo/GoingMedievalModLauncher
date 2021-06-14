@@ -4,34 +4,8 @@ namespace GoingMedievalModLauncher
 {
     public interface IPlugin
     {
-     
-	       /// <summary>
-        /// A alphanumeric string which describes the name of the plugin / mod.
-        /// </summary>
-        string Name { get; }
 
-        /// <summary>
-        /// A alphanumeric string which describes the functionality of the plugin / mod.
-        /// </summary>
-        string Description { get; }
-        
-        /// <summary>
-        /// The Unique ID of the mod. Should only contain underscores and big or small english letters.
-        /// TODO:Really test this case.
-        /// </summary>
-        string ID { get; }
-
-        /// <summary>
-        /// A alphanumeric string which describes the version of the plugin / mod.
-        /// </summary>
-        string Version { get; }
-
-        /// <summary>
-        /// a boolean variable which indicates that this mod is active or not
-        /// </summary>
-        bool activeState { get; set; }
-
-        /// <summary>
+     /// <summary>
         /// The plugins initalization phase
         /// </summary>
         void initialize();

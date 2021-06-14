@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
+using GoingMedievalModLauncher.Engine;
 using GoingMedievalModLauncher.ui;
 using HarmonyLib;
 using NSEipix.Base;
-using NSMedieval.Tools.Debug;
-using NSMedieval.UI;
+using NSMedieval.Crops;
+using NSMedieval.Production;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -37,21 +37,30 @@ namespace GoingMedievalModLauncher
 
             if (startupFinished) return;
 
-            new Thread(() =>
+            //Just be double safe.
+            SceneManager.sceneLoaded -= startup;
+
+            try
             {
-                try
+                var harmony = new Harmony("com.modloader.nsmeadival");
+                    
+                MainMenuPatch.ApplyPatch(harmony);
+                RoomTypePatch.ApplyPatch(harmony);
+                RoomTypeTooltipViewPatch.ApplyPatch(harmony);
+                RepositoryPatch<RoomTypeRepository, RoomType>.ApplyPatch(harmony);
+                RepositoryPatch<CropfieldRepository, Cropfield>.ApplyPatch(harmony);
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.info("Error happened while loading patches.\n" + e);
+                throw;
+            }
+            
+            try
+            {
+
+                MainMenuPatch.OnMenuStartPost += delegate
                 {
-                    
-                    var harmony = new Harmony("com.modloader.nsmeadival");
-                    
-                    MainMenuPatch.ApplyPatch(harmony);
-
-                    Singleton<PluginManager>.Instance.loadAssemblies();
-                    
-                    // wait a short amount of time in order to let the game initialize itself
-                    Thread.Sleep(2500);
-                   
-
                     Logger.Instance.info("Mod-loader thread is running ...");
 
                     // create a gameObject which we can use as a root reference to the scene-graph
@@ -59,15 +68,17 @@ namespace GoingMedievalModLauncher
                     modLoaderObject.AddComponent<EngineLauncher>();
                     
                     // print out a nice little confirmation message that the plugin has been loaded
-                    Logger.Instance.info("... initialization thread has been finished!");
-                }
-                catch (Exception e)
-                {
-                    Logger.Instance.info("An error occured: \n");
-                    Logger.Instance.info(e.ToString());
-                    throw;
-                }
-            }).Start();
+                    Logger.Instance.info("... initialization thread has been finished!");  
+                };
+                    
+                Singleton<PluginManager>.Instance.loadAssemblies();
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.info("An error occured: \n");
+                Logger.Instance.info(e.ToString());
+                throw;
+            }
 
             startupFinished = true;
         }
