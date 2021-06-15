@@ -39,20 +39,20 @@
           <Private>False</Private>
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>$(GameDir)\Going Medieval_Data\Managed\\Assembly-CSharp.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
         <Reference Include="System.Xml" />
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>$(GameDir)\Going Medieval_Data\Managed\\UnityEngine.CoreModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>$(GameDir)\Going Medieval_Data\Managed\\UnityEngine.InputLegacyModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.InputModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>$(GameDir)\Going Medieval_Data\Managed\\UnityEngine.InputModule.dll</HintPath>
+          <HintPath>$(GameDir)\Going Medieval_Data\Managed\UnityEngine.InputModule.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
