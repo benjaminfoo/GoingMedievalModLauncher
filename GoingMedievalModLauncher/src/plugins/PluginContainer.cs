@@ -10,11 +10,10 @@ using NSEipix.Base;
 using NSEipix.ObjectMapper;
 using NSEipix.Repository;
 using NSMedieval.Crops;
-using NSMedieval.Enums;
 using NSMedieval.Production;
+using NSMedieval.Research;
 
-
-namespace GoingMedievalModLauncher
+namespace GoingMedievalModLauncher.plugins
 {
 	
 	/// <summary>
@@ -66,7 +65,7 @@ namespace GoingMedievalModLauncher
 		/// <summary>
 		/// a boolean variable which indicates that the mod is active or not
 		/// </summary>
-		public bool activeState { get; set; }
+		public bool ActiveState { get; set; }
 
 		protected PluginContainer(DirectoryInfo path, Dictionary<string, string> manifest)
 		{
@@ -99,13 +98,13 @@ namespace GoingMedievalModLauncher
 				Description = manifest.TryGetValue("description", out string desc) ? desc: "";
 				
 				//For the invalid plugin
-				activeState = true;
+				ActiveState = true;
 			}
 
 			if ( _code != null )
 			{
-				// load all the assemblies from the directory
 				ICollection<Assembly> assemblies = new List<Assembly>();
+				// load all the assemblies from the directory
 				foreach ( FileInfo dllFile in _code.GetFiles("*.dll") )
 				{
 					Logger.Instance.info("Found dll: " + dllFile + " ...");
@@ -113,51 +112,63 @@ namespace GoingMedievalModLauncher
 					Assembly assembly = Assembly.Load(an);
 					assemblies.Add(assembly);
 				}
-
+				
 				// Check if the assembly is valid (we don't want to load any dll within the mods-directory
 				Type pluginType = typeof(IPlugin);
 				List<Type> validPlugins = new List<Type>();
-				foreach ( Assembly assembly in assemblies )
+				
+				try
 				{
-					if ( assembly != null )
+					foreach ( Assembly assembly in assemblies )
 					{
-						Type[] types = assembly.GetTypes();
-						foreach ( Type type in types )
+						if ( assembly != null )
 						{
-							if ( type.IsInterface || type.IsAbstract )
+							Type[] types = assembly.GetTypes();
+							foreach ( Type type in types )
 							{
-								continue;
-							}
+								if ( type.IsInterface || type.IsAbstract )
+								{
+									continue;
+								}
 
-							if
-							(
-								type.GetInterface(pluginType.FullName) != null &&
-								type.GetInterfaces().Contains(typeof(IPlugin))
-							)
-							{
-								validPlugins.Add(type);
+								if
+								(
+									type.GetInterface(pluginType.FullName) != null &&
+									type.GetInterfaces().Contains(typeof(IPlugin))
+								)
+								{
+									validPlugins.Add(type);
+								}
 							}
 						}
 					}
+				}
+				catch (Exception e)
+				{
+					Logger.Instance.info("Unable to get Plugin's type. Maybe the ode is referencing an older launcher?");
+					Logger.Instance.info(e.ToString());
+					
 				}
 
 				//TODO: more erros?
 				if ( validPlugins.Count == 0 )
 				{
 					Logger.Instance.info("No valid plugin were found for this directory.");
+					ActiveState = false;
 
 				}
 				else if ( validPlugins.Count > 2 )
 				{
 					Logger.Instance.info("More than two plugins were found in this directory!");
+					ActiveState = false;
 				}
 				else
 				{
-					var plugin = (IPlugin) Activator.CreateInstance(validPlugins[0]);
+					var instance = (IPlugin) Activator.CreateInstance(validPlugins[0]);
 
 					try
 					{
-						plugin.initialize();
+						instance.initialize();
 						// TODO:  plugin.start(doorstepGameObject);
 					}
 					catch (Exception e)
@@ -165,7 +176,7 @@ namespace GoingMedievalModLauncher
 						Logger.Instance.info("An error happened initalizting a plugin!\n" + e);
 					}
 
-					this.plugin = plugin;
+					plugin = instance;
 				}
 			}
 		}
@@ -222,16 +233,15 @@ namespace GoingMedievalModLauncher
 			return true;
 
 		}
-
-		//TODO: make the method universal.
-		public bool LoadJsonRepositories<T, M>( T repo, FileInfo json, out RepositoryDto<M> dto) where T : 
-		JsonRepository<T, M> 
-		where
-		 M: Model
+		private bool LoadJsonRepository<T, M>( T repo, FileInfo json, out RepositoryDto<M> dto) 
+			where T : JsonRepository<T, M> 
+		where M: Model
 		{
 
+			//set up, so if error happens, null is returned.
 			dto = null;
 			
+			//If the file does not exist, log it, and return false
 			if ( json == null || !json.Exists )
 			{
 				Logger.Instance.info("The file was null, or empty so the repository can ot be loaded.");
@@ -246,20 +256,72 @@ namespace GoingMedievalModLauncher
 				Logger.Instance.info("Unable to get the serializer method. How did this happened?");
 				return false;
 			}
+			// With RepositoryDto we can easily deserialize
 			var deserializer = 
-				desInfo.Invoke(repo, new []{json.FullName}) as ISerializer<RepositoryDto<M>>;
+				desInfo.Invoke(repo, new object[]{json.FullName}) as ISerializer<RepositoryDto<M>>;
 			if ( deserializer == null )
 			{
 				Logger.Instance.info("The serializer returned was null. This should happen.");
 				return false;
 			}
 			dto = deserializer.Deserialize();
-			var id = typeof(RoomType).GetField("id", BindingFlags.NonPublic | BindingFlags.Instance);
+			var id = typeof(M).GetField("id", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			if ( id == null )
+			{
+				Logger.Instance.info("The id of the model class does not exist.");
+				return false;
+			}
+
+			if ( dto == null )
+			{
+				Logger.Instance.info("Can not get the dto. Is the json valid? Can be deserialized?");
+
+				return false;
+			}
+			
 			foreach ( var type in dto.Repository )
 			{
-				id.SetValue(type, ID+":"+id.GetValue(type));
+				//Add the mod id to the begining of the normal id
+				id.SetValue(type, $"#{ID}:{id.GetValue(type)}");
 			}
 			return true;
+		}
+
+		private void RegisterJsonRepositoryLoader<T, M>(string relativePath)
+			where T : JsonRepository<T, M>
+			where M : Model
+		{
+			Logger.Instance.info(
+				"Adding register event for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+			RepositoryPatch<T, M>.PostDeserialization +=
+				delegate(T repo)
+				{
+
+					//If the assets directory is not exist, we won't be able to find the file
+					if ( _assest == null )
+					{
+						Logger.Instance.info(
+							"Assets directory was null on loading repository: <"
+							+ typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+						return;
+					}
+
+					Logger.Instance.info(
+						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+
+					if ( LoadJsonRepository<T, M>(repo,
+						new FileInfo(Path.Combine(
+								_assest.FullName ,relativePath)),
+						out var rooms) )
+					{
+						foreach ( var item in rooms.Repository )
+						{
+							repo.Add(item);
+						}
+					}
+
+				};
 		}
 
 		public static PluginContainer Create(DirectoryInfo dir)
@@ -286,52 +348,19 @@ namespace GoingMedievalModLauncher
 				return InvalidPluginContainer.Instance;
 			}
 			
+			//created the container, that will be returned.
 			var container = new PluginContainer(dir, manifest);
 
 			if ( !container.LoadLanguageFile() )
 			{
-				Logger.Instance.info("An error occured while loading the langugae file.");
+				Logger.Instance.info("An error occured while loading the language file.");
 			}
-			
-			RepositoryPatch<CropfieldRepository, Cropfield>.PostDeserialization += delegate(CropfieldRepository repo)
-			{
-				if ( container._assest == null )
-				{
-					return;
-				}
-				
-				if ( container.LoadJsonRepositories<CropfieldRepository, Cropfield>(repo, new FileInfo(Path.Combine
-					(container._assest.FullName, "Cropfields/Cropfields.json")) ,out var
-					rooms) )
-				{
-					foreach ( var item in rooms.Repository )
-					{
-						repo.Add(item);
-					}
-				}
-				
-			};
 
-			RepositoryPatch<RoomTypeRepository, RoomType>.PostDeserialization +=
-				delegate(RoomTypeRepository repo)
-				{
+			container.RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>("Data/RoomTypes.json");
 
-					if ( container._assest == null )
-					{
-						return;
-					}
+			container.RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>("Research/Research.json");
 
-					if ( container.LoadJsonRepositories<RoomTypeRepository, RoomType>(repo, new FileInfo(Path.Combine
-					(container._assest.FullName, "Data/RoomTypes.json")) ,out var
-					 rooms) )
-					{
-						foreach ( var item in rooms.Repository )
-						{
-							repo.Add(item);
-						}
-					}
-
-				};
+			container.RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>("CropFields/CropFields.json");
 
 			return container;
 
@@ -351,7 +380,7 @@ namespace GoingMedievalModLauncher
 		private InvalidPluginContainer() : base(null, null)
 		{
 			//invalid plugins are not active
-			activeState = false;
+			ActiveState = false;
 		}
 
 	}

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace GoingMedievalModLauncher
+namespace GoingMedievalModLauncher.plugins
 {
     public interface IPlugin
     {

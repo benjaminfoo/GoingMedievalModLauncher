@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace GoingMedievalModLauncher
+namespace GoingMedievalModLauncher.plugins
 {
     // The PluginComponent is a simple monobehavior which contains a reference to an IPlugin-Instance - 
     // this way, a plugin / mod can make use of the native lifecycle of an object within the unity-engine.

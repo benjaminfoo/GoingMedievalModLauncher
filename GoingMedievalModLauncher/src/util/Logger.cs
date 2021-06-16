@@ -13,7 +13,7 @@ namespace GoingMedievalModLauncher
         private static string LOG_PATH = @".\";
         private static string LOG_FILE = "mod_launcher.log";
         private readonly TextWriter writer;
-        private int counter = 0;
+        private object l = new object();
 
         private Logger()
         {
@@ -24,9 +24,8 @@ namespace GoingMedievalModLauncher
 
         public void info(string message)
         {
-            counter++;
             writer.Write(LOG_TAG + ":" + "\t" + message + Environment.NewLine);
-            if ( counter >= 10 )
+            lock (l)
             {
                 writer.Flush();
             }

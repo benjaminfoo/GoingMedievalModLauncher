@@ -1,5 +1,6 @@
 ﻿using System;
 using GoingMedievalModLauncher;
+using GoingMedievalModLauncher.plugins;
 using HarmonyLib;
 using NSEipix.Base;
 using NSMedieval;

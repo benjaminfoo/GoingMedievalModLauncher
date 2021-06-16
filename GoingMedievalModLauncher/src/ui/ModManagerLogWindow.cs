@@ -43,7 +43,7 @@ namespace GoingMedievalModLauncher.ui
             setup(this.fileName);
         }
 
-        public override void renderContent()
+        public override void RenderContent()
         {
             
             // setup the scrollView dimensions based on the amount of loaded mods

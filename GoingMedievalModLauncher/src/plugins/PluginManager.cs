@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using NSEipix.Base;
-using UnityEngine;
 
-namespace GoingMedievalModLauncher
+namespace GoingMedievalModLauncher.plugins
 {
     public class PluginManager : Singleton<PluginManager>
     {
