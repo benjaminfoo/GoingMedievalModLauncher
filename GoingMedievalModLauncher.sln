@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyPlugin", "DummyPlugin\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExperimentalMod", "ExperimentalMod\ExperimentalMod.csproj", "{AFB3E9BE-3087-4033-8B07-E5F18D99A25F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleMenuMod", "ExampleMenuMod\ExampleMenuMod.csproj", "{EDE0D18F-D050-437B-8A12-D6593EE7168E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "Props\common.props", "{990EEEE2-A801-4EE9-B89A-E53192219438}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,5 +51,9 @@ Global
 		{AFB3E9BE-3087-4033-8B07-E5F18D99A25F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFB3E9BE-3087-4033-8B07-E5F18D99A25F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFB3E9BE-3087-4033-8B07-E5F18D99A25F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDE0D18F-D050-437B-8A12-D6593EE7168E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDE0D18F-D050-437B-8A12-D6593EE7168E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDE0D18F-D050-437B-8A12-D6593EE7168E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDE0D18F-D050-437B-8A12-D6593EE7168E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

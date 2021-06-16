@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using GoingMedievalModLauncher.ui;
 using HarmonyLib;
 using NSEipix.Base;
@@ -15,6 +16,7 @@ using NSMedieval.StatsSystem;
 using NSMedieval.Tools;
 using NSMedieval.Tools.BugReporting;
 using NSMedieval.Types;
+using NSMedieval.UI;
 using UnityEngine;
 using Object = System.Object;
 
@@ -26,20 +28,20 @@ namespace GoingMedievalModLauncher
     // plugin within the unity-engine.
     public class EngineLauncher : MonoBehaviour
     {
-        public void Start()
+        public void Awake()
         {
-            
+
             // update the game version to indicate this is a modded version
             var gameVersion = UnityEngine.GameObject.FindObjectOfType<GameVersion>();
             var t = Traverse.Create(gameVersion);
             t.Field("suffix").SetValue(" - mods active");
             t.Method("Start").GetValue();
-            
+
             // dont destroy the engines object when loading another scene, etc.
             DontDestroyOnLoad(this);
 
             // Load all the mods / plugins / assemblies from the mods directory
-            var loadedPlugins = PluginManager.getInstance().loadAssemblies();
+            var loadedPlugins = Singleton<PluginManager>.Instance.GetPlugins();
 
             // Initialize a new gameObject for each loaded plugin: 
             // - set it up
@@ -48,11 +50,11 @@ namespace GoingMedievalModLauncher
             foreach (var loadedPlugin in loadedPlugins)
             {
                 PluginComponent pluginComponent = this.gameObject.AddComponent<PluginComponent>();
-                pluginComponent.setup(loadedPlugin);
+                pluginComponent.setup(loadedPlugin.plugin);
             }
 
             // Show a fancy ui to display and control every loaded mod at runtime
-            Logger.getInstance().info("Showing mod-manager window...");
+            Logger.Instance.info("Showing mod-manager window...");
             var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
 
         }

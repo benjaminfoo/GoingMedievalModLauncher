@@ -1,0 +1,5 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <GameDir>d:\Games\Steam\steamapps\common\Going Medieval</GameDir>
+    </PropertyGroup>
+</Project>

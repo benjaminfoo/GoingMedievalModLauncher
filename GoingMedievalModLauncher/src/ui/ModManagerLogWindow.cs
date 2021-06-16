@@ -1,13 +1,19 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using System.Text;
+using NSMedieval.Model;
+using NSMedieval.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace GoingMedievalModLauncher.ui
 {
     public class ModManagerLogWindow : UIWindow
     {
+
+        private static Sprite sp = Resources.GetBuiltinResource<Sprite>("frame_01");
         
         private StringBuilder logOutput = new StringBuilder();
 
@@ -27,7 +33,7 @@ namespace GoingMedievalModLauncher.ui
             calculatedMaxWindowHeight = logOutput.ToString().Split('\n').Length * 16;
         }
 
-        public void Start()
+        public new void Start()
         {
             this.windowTitle = "Going Medieval - Log";
             this.windowId = 2;
@@ -49,6 +55,7 @@ namespace GoingMedievalModLauncher.ui
             // Make the windows be draggable.
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
+        
 
     }
 }

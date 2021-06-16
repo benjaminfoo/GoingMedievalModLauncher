@@ -15,6 +15,7 @@ namespace BugReportDisabler
         public string Name => "Bug-Report Disabler";
 
         public string Description => "Disables the sending of error-reports.";
+        public string ID => "bugreport_begone";
         public string Version => "v0.0.2";
         public bool activeState { get; set; }
 
@@ -30,7 +31,7 @@ namespace BugReportDisabler
             try
             {
                 // disable the bug reporter
-                Logger.getInstance().info("Disabling error reports ...");
+                Logger.Instance.info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(true);
@@ -39,7 +40,7 @@ namespace BugReportDisabler
             }
             catch (Exception e)
             {
-                Logger.getInstance().info(e.ToString());
+                Logger.Instance.info(e.ToString());
                 throw;
             }
             
@@ -56,7 +57,7 @@ namespace BugReportDisabler
             try
             {
                 // disable the bug reporter
-                Logger.getInstance().info("Disabling error reports ...");
+                Logger.Instance.info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(false);
@@ -65,7 +66,7 @@ namespace BugReportDisabler
             }
             catch (Exception e)
             {
-                Logger.getInstance().info(e.ToString());
+                Logger.Instance.info(e.ToString());
                 throw;
             }
         }

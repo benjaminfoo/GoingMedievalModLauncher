@@ -1,31 +1,7 @@
-﻿using System;
-using System.Text;
-using HarmonyLib;
-using NSEipix;
-using NSEipix.Base;
-using NSEipix.Repository;
-using NSMedieval;
-using NSMedieval.Components.Base;
-using NSMedieval.Construction;
-using NSMedieval.DevConsole;
-using NSMedieval.Dictionary;
-using NSMedieval.Enums;
-using NSMedieval.GameEventSystem;
-using NSMedieval.InfoMessages;
-using NSMedieval.Model;
-using NSMedieval.Model.MapNew;
-using NSMedieval.Repository;
+﻿using NSEipix.Base;
 using NSMedieval.Sound;
-using NSMedieval.StatsSystem;
-using NSMedieval.Tools;
-using NSMedieval.Tools.Debug;
-using NSMedieval.Types;
 using NSMedieval.UI;
-using NSMedieval.UI.Utils;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UI.Extensions.Examples;
-using Object = UnityEngine.Object;
 
 namespace GoingMedievalModLauncher.ui
 {
@@ -39,7 +15,7 @@ namespace GoingMedievalModLauncher.ui
             // BlackBarMessageController.Instance.ShowClickableBlackBarMessage("Hello World!", Vector3.one);
         }
 
-        public void Start()
+        public new void Start()
         {
             this.windowTitle = "Going Medieval - Mod Manager";
             this.windowId = 1;
@@ -48,6 +24,8 @@ namespace GoingMedievalModLauncher.ui
 
             bigFontSizeStyle.fontSize = 16;
             bigFontSizeStyle.normal.textColor = Color.white;
+            
+            base.Start();
             
         }
 
@@ -72,7 +50,7 @@ namespace GoingMedievalModLauncher.ui
             // setup the scrollView dimensions based on the amount of loaded mods
             scrollViewRect.Set(1,20, windowRect.width-4, windowRect.height-2);
             scrollContentMaxSize.Set(0,0, windowRect.width, 
-                height: 150 + (PluginManager.getInstance().GetPlugins().Count * sizePerRow)    
+                height: 150 + (Singleton<PluginManager>.Instance.GetPlugins().Count * sizePerRow)    
             );
             
             // Toggle the visibility of the mod-loader log
@@ -95,7 +73,7 @@ namespace GoingMedievalModLauncher.ui
             drawRect(new Rect(0, 40, windowRect.width , 2), lineColor );
             
             // render a row per mod on the manager ui
-            foreach (var plugin in PluginManager.getInstance().GetPlugins())
+            foreach (var pluginc in Singleton<PluginManager>.Instance.GetPlugins())
             {
                 // setup the positions for labels
                 var y = 50 + (index * sizePerRow);
@@ -103,34 +81,34 @@ namespace GoingMedievalModLauncher.ui
                 var descriptionLabelRect = new Rect(10, y + 14, windowRect.width - 150, 40);
 
                 // render the labels name, description and version of a mod
-                GUI.Label(nameLabelRect, plugin.Name + ", " + plugin.Version, bigFontSizeStyle);
-                GUI.Label(descriptionLabelRect, plugin.Description);
+                GUI.Label(nameLabelRect, pluginc.Name + ", " + pluginc.Version, bigFontSizeStyle);
+                GUI.Label(descriptionLabelRect, pluginc.Description);
 
                 // setup a toggle-state button for enabling / disabling a mod
                 var enableButtonRect = new Rect(windowRect.width - 150, y, 100, 40);
-                string buttonCaption = plugin.activeState ? "Enabled" : "Disabled";
-                GUI.contentColor = plugin.activeState ? Color.green : Color.red;
+                string buttonCaption = pluginc.activeState ? "Enabled" : "Disabled";
+                GUI.contentColor = pluginc.activeState ? Color.green : Color.red;
 
                 // Setup the toggle-state button
                 if (GUI.Button(enableButtonRect, buttonCaption))
                 {
                     // toggle the state of the plugin by toggling it
-                    plugin.activeState = !plugin.activeState;
+                    pluginc.activeState = !pluginc.activeState;
                     
-                    if (plugin.activeState)
+                    if (pluginc.activeState)
                     {
-                        Logger.getInstance().info("Enabling plugin \"" + plugin.Name + "\" ...");
-                        plugin.initialize();
-                        plugin.start(this);
+                        Logger.Instance.info("Enabling plugin \"" + pluginc.Name + "\" ...");
+                        pluginc.plugin.initialize();
+                        pluginc.plugin.start(this);
                         
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOn");
                     }
                     else
                     {
-                        Logger.getInstance().info("Disabling plugin \"" + plugin.Name + "\" ...");
+                        Logger.Instance.info("Disabling plugin \"" + pluginc.Name + "\" ...");
 
-                        plugin.disable(this);
-                        plugin.activeState = false;
+                        pluginc.plugin.disable(this);
+                        pluginc.activeState = false;
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOff");
                     }
                 }

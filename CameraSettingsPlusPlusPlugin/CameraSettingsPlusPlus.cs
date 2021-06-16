@@ -13,6 +13,7 @@ namespace CameraSettingsPlusPlus
         public string Name => "Camera-Settings";
         
         public string Description => "Increases rendering-, zoom- & shadow-distance - may slow down performance.";
+        public string ID => "cameraPlusPlus";
         public string Version => "v0.0.2";
         
         public bool activeState { get; set; }
@@ -59,7 +60,7 @@ namespace CameraSettingsPlusPlus
             }
             catch (Exception e)
             {
-                Logger.getInstance().info(e.ToString());
+                Logger.Instance.info(e.ToString());
                 throw;
             }
             
@@ -82,7 +83,7 @@ namespace CameraSettingsPlusPlus
             }
             catch (Exception e)
             {
-                Logger.getInstance().info(e.ToString());
+                Logger.Instance.info(e.ToString());
                 throw;
             }
 
