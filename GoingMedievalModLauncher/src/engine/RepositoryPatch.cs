@@ -18,7 +18,7 @@ namespace GoingMedievalModLauncher.Engine
 				PostDeserialization(repo);
 			}
 		}
-		
+
 	}
 	
 }

@@ -4,14 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using GoingMedievalModLauncher.Engine;
+using GoingMedievalModLauncher.MonoScripts;
 using I2.Loc;
 using Newtonsoft.Json;
 using NSEipix.Base;
 using NSEipix.ObjectMapper;
 using NSEipix.Repository;
+using NSMedieval.Construction;
 using NSMedieval.Crops;
+using NSMedieval.Model;
 using NSMedieval.Production;
+using NSMedieval.Repository;
 using NSMedieval.Research;
+using UnityEngine;
 
 namespace GoingMedievalModLauncher.plugins
 {
@@ -21,6 +26,7 @@ namespace GoingMedievalModLauncher.plugins
 	/// </summary>
 	public class PluginContainer
 	{
+		
 
 		/// <summary>
 		/// The mod's folder.
@@ -233,9 +239,10 @@ namespace GoingMedievalModLauncher.plugins
 			return true;
 
 		}
-		private bool LoadJsonRepository<T, M>( T repo, FileInfo json, out RepositoryDto<M> dto) 
+		private bool LoadJsonRepositoryWithIdField<T, M>( T repo, FileInfo json, out RepositoryDto<M> dto, string
+		 idFieldName) 
 			where T : JsonRepository<T, M> 
-		where M: Model
+			where M: Model
 		{
 
 			//set up, so if error happens, null is returned.
@@ -265,7 +272,7 @@ namespace GoingMedievalModLauncher.plugins
 				return false;
 			}
 			dto = deserializer.Deserialize();
-			var id = typeof(M).GetField("id", BindingFlags.NonPublic | BindingFlags.Instance);
+			var id = typeof(M).GetField(idFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
 
 			if ( id == null )
 			{
@@ -288,7 +295,12 @@ namespace GoingMedievalModLauncher.plugins
 			return true;
 		}
 
-		private void RegisterJsonRepositoryLoader<T, M>(string relativePath)
+		private bool LoadJsonRepository<T, M>(T repo, FileInfo json, out RepositoryDto<M> dto)
+			where T : JsonRepository<T, M>
+			where M : Model
+			=> LoadJsonRepositoryWithIdField(repo, json, out dto, "id");
+
+		private void RegisterJsonRepositoryLoader<T, M>()
 			where T : JsonRepository<T, M>
 			where M : Model
 		{
@@ -310,13 +322,23 @@ namespace GoingMedievalModLauncher.plugins
 					Logger.Instance.info(
 						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 
+					//Get the overriden JsonFile method, that return the relative path to the json file
+					var _jsonFile = typeof(T).GetMethod("JsonFile", BindingFlags.NonPublic | BindingFlags.Instance);
+
+					if ( _jsonFile == null )
+					{
+						Logger.Instance.info("Unable to get the protected method \"JsonFile\".");
+						return;
+					}
+
 					if ( LoadJsonRepository<T, M>(repo,
 						new FileInfo(Path.Combine(
-								_assest.FullName ,relativePath)),
+								_assest.FullName, _jsonFile.Invoke(repo, null) as string)),
 						out var rooms) )
 					{
 						foreach ( var item in rooms.Repository )
 						{
+							Logger.Instance.info($"Added item {item.GetID()} to repository {typeof(T).Name}");
 							repo.Add(item);
 						}
 					}
@@ -324,6 +346,88 @@ namespace GoingMedievalModLauncher.plugins
 				};
 		}
 
+		private void RegisterJsonRepositoryLoaderWithIdField<T, M>(string fieldName)
+			where T : JsonRepository<T, M>
+			where M : Model
+		{
+			Logger.Instance.info(
+				"Adding register event for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+			RepositoryPatch<T, M>.PostDeserialization +=
+				delegate(T repo)
+				{
+
+					//If the assets directory is not exist, we won't be able to find the file
+					if ( _assest == null )
+					{
+						Logger.Instance.info(
+							"Assets directory was null on loading repository: <"
+							+ typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+						return;
+					}
+
+					Logger.Instance.info(
+						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+
+					//Get the overriden JsonFile method, that return the relative path to the json file
+					var _jsonFile = typeof(T).GetMethod("JsonFile", BindingFlags.NonPublic | BindingFlags.Instance);
+
+					if ( _jsonFile == null )
+					{
+						Logger.Instance.info("Unable to get the protected method \"JsonFile\".");
+						return;
+					}
+
+					if ( LoadJsonRepositoryWithIdField<T, M>(repo,
+						new FileInfo(Path.Combine(
+							_assest.FullName, _jsonFile.Invoke(repo, null) as string)),
+						out var rooms, fieldName))
+					{
+						foreach ( var item in rooms.Repository )
+						{
+							Logger.Instance.info($"Added item {item.GetID()} to repository {typeof(T).Name}");
+							repo.Add(item);
+						}
+					}
+
+				};
+		}
+
+		private void LoadAssetsBundles()
+		{
+			if(_assest == null)
+				return;
+
+			DirectoryInfo bundles = new DirectoryInfo(Path.Combine(_assest.FullName, "Bundles"));
+
+			foreach ( var fileInfo in bundles.EnumerateFiles() )
+			{
+				if(fileInfo.Name.Contains("manifest"))
+					continue;
+				
+				var bundle = AssetBundle.LoadFromFile(fileInfo.FullName);
+				if(bundle == null)
+					continue;
+				
+				Logger.Instance.info($"Bundle: {bundle.name}");
+
+				bundle.LoadAllAssets();
+
+				var assets = bundle.LoadAllAssets<GameObject>();
+
+				foreach ( var mapper in assets )
+				{
+					PrefabRepositoryPatch.OnStart += delegate(PrefabRepository repository)
+					{
+						mapper.AddComponent<BarrelBuildableView>();
+						repository.Add(new KeyGameObjectPair($"{ID}:{mapper.name}", mapper));
+						repository.Add(new KeyGameObjectPair($"{ID}:{mapper.name}_preview", mapper));
+						Logger.Instance.info($"#{ID}:{mapper.name}");
+					};
+				}
+				
+			}
+		}
+		
 		public static PluginContainer Create(DirectoryInfo dir)
 		{
 			Logger.Instance.info("Creating plugin container for: " + dir.Name);
@@ -356,11 +460,15 @@ namespace GoingMedievalModLauncher.plugins
 				Logger.Instance.info("An error occured while loading the language file.");
 			}
 
-			container.RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>("Data/RoomTypes.json");
+			container.LoadAssetsBundles();
+			
+			container.RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
+			
+			container.RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>();
+			container.RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>();
+			container.RegisterJsonRepositoryLoaderWithIdField<ProductionRepository, Production>("productionId");
 
-			container.RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>("Research/Research.json");
-
-			container.RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>("CropFields/CropFields.json");
+			container.RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>();
 
 			return container;
 

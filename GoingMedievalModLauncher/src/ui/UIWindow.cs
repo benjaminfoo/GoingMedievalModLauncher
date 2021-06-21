@@ -13,6 +13,7 @@ namespace GoingMedievalModLauncher.ui
      */
     public abstract class UIWindow : UIBehaviour
     {
+
         // an numeric value which is used to identify / differntiate between all windows 
         public int windowId;
         
@@ -67,7 +68,7 @@ namespace GoingMedievalModLauncher.ui
 
             // draw the content of the inherited class
             RenderContent();
-            
+
             // disable the scroll view rendering
             GUI.EndScrollView();
         }

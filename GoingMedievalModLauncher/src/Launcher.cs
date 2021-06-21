@@ -8,7 +8,9 @@ using HarmonyLib;
 using NSEipix.Base;
 using NSEipix.Repository;
 using NSMedieval.Crops;
+using NSMedieval.Model;
 using NSMedieval.Production;
+using NSMedieval.Repository;
 using NSMedieval.Research;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -85,6 +87,11 @@ namespace GoingMedievalModLauncher
             ReplaceComponent<ResearchRepository, ResearchModel>();
             Logger.Instance.info("The research repository was replaced with a patched one.");
             ReplaceComponent<CropfieldRepository, Cropfield>();
+            Logger.Instance.info("The crop field repository was replaced with a patched one.");
+            ReplaceComponent<ResourceRepository, Resource>();
+            Logger.Instance.info("The resource repository was replaced with a patched one.");
+            ReplaceComponent<ProductionRepository, Production>();
+            Logger.Instance.info("The resource repository was replaced with a patched one.");
         }
 
         /*
@@ -104,9 +111,11 @@ namespace GoingMedievalModLauncher
             {
                 var harmony = new Harmony("com.modloader.nsmeadival");
                     
+                DebbugingPatches.ApplyPatches(harmony);
                 MainMenuPatch.ApplyPatch(harmony);
                 RoomTypePatch.ApplyPatch(harmony);
                 LocalizationControllerPatch.ApplyPatch(harmony);
+                PrefabRepositoryPatch.ApplyPatch(harmony);
             }
             catch (Exception e)
             {
