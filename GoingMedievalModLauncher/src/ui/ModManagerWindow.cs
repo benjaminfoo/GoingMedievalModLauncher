@@ -1,4 +1,5 @@
-﻿using NSEipix.Base;
+﻿using GoingMedievalModLauncher.plugins;
+using NSEipix.Base;
 using NSMedieval.Sound;
 using NSMedieval.UI;
 using UnityEngine;
@@ -40,7 +41,7 @@ namespace GoingMedievalModLauncher.ui
             
         }
 
-        public override void renderContent()
+        public override void RenderContent()
         {
 
             // render a table-like structure
@@ -86,16 +87,16 @@ namespace GoingMedievalModLauncher.ui
 
                 // setup a toggle-state button for enabling / disabling a mod
                 var enableButtonRect = new Rect(windowRect.width - 150, y, 100, 40);
-                string buttonCaption = pluginc.activeState ? "Enabled" : "Disabled";
-                GUI.contentColor = pluginc.activeState ? Color.green : Color.red;
+                string buttonCaption = pluginc.ActiveState ? "Enabled" : "Disabled";
+                GUI.contentColor = pluginc.ActiveState ? Color.green : Color.red;
 
                 // Setup the toggle-state button
                 if (GUI.Button(enableButtonRect, buttonCaption))
                 {
                     // toggle the state of the plugin by toggling it
-                    pluginc.activeState = !pluginc.activeState;
+                    pluginc.ActiveState = !pluginc.ActiveState;
                     
-                    if (pluginc.activeState)
+                    if (pluginc.ActiveState)
                     {
                         Logger.Instance.info("Enabling plugin \"" + pluginc.Name + "\" ...");
                         pluginc.plugin.initialize();
@@ -108,7 +109,7 @@ namespace GoingMedievalModLauncher.ui
                         Logger.Instance.info("Disabling plugin \"" + pluginc.Name + "\" ...");
 
                         pluginc.plugin.disable(this);
-                        pluginc.activeState = false;
+                        pluginc.ActiveState = false;
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOff");
                     }
                 }

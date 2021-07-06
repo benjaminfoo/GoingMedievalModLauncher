@@ -13,6 +13,7 @@ namespace GoingMedievalModLauncher.ui
      */
     public abstract class UIWindow : UIBehaviour
     {
+
         // an numeric value which is used to identify / differntiate between all windows 
         public int windowId;
         
@@ -37,12 +38,13 @@ namespace GoingMedievalModLauncher.ui
         public Rect scrollViewRect = new Rect();
         public Rect scrollContentMaxSize = new Rect();
 
-        private void Awake()
+        private new void Awake()
         {
+            base.Awake();
             gameObject.AddComponent<RectTransform>();
         }
 
-        private void renderWindow(int windowId)
+        private void RenderWindow(int windowId)
         {
             
             // https://forum.unity.com/threads/how-to-use-a-scrollview-in-a-gui-window.92204/
@@ -65,8 +67,8 @@ namespace GoingMedievalModLauncher.ui
             scrollPosition = GUI.BeginScrollView (scrollViewRect, scrollPosition,  scrollContentMaxSize);
 
             // draw the content of the inherited class
-            renderContent();
-            
+            RenderContent();
+
             // disable the scroll view rendering
             GUI.EndScrollView();
         }
@@ -79,11 +81,11 @@ namespace GoingMedievalModLauncher.ui
                 // Register the window. We create two windows that use the same function
                 // Notice that their IDs differ
                 GUI.backgroundColor = Color.black;
-                windowRect = GUI.Window(windowId, windowRect, renderWindow, windowTitle);
+                windowRect = GUI.Window(windowId, windowRect, RenderWindow, windowTitle);
             }
         }
 
-        public abstract void renderContent();
+        public abstract void RenderContent();
 
     }
     
