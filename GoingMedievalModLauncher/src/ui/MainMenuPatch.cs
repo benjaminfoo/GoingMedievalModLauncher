@@ -11,7 +11,7 @@ namespace GoingMedievalModLauncher.ui
 
 		public static event onMenuStartPost OnMenuStartPost;
 		
-		public static void Start()
+		private static void Start()
 		{
 			if ( OnMenuStartPost != null )
 			{
@@ -23,7 +23,7 @@ namespace GoingMedievalModLauncher.ui
 		public static void ApplyPatch(Harmony harmony)
 		{
 			var orig = typeof(MainMenuView).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
-			var post = typeof(MainMenuPatch).GetMethod("Start", BindingFlags.Static | BindingFlags.Public);
+			var post = typeof(MainMenuPatch).GetMethod("Start", BindingFlags.Static | BindingFlags.NonPublic);
 			harmony.Patch(orig, postfix: new HarmonyMethod(post));
 			
 			Logger.Instance.info("MainMenuView Start was patched with postfix");
