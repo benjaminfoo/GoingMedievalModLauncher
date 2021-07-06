@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NSEipix.Base;
 
 namespace GoingMedievalModLauncher.plugins
@@ -8,6 +9,7 @@ namespace GoingMedievalModLauncher.plugins
     {
 
         private ICollection<PluginContainer> plugins;
+        private PluginTree tree = new PluginTree();
 
         private PluginManager()
         {
@@ -33,12 +35,105 @@ namespace GoingMedievalModLauncher.plugins
                 var p = PluginContainer.Create(pluginDir);
                 if ( !(p is InvalidPluginContainer) )
                 {
-                    plugins.Add(p);
+                    plugins.Add(p as PluginContainer);
                 }
+            }
+
+            ValidateRequirements();
+            
+            ValidateDependencies();
+
+            foreach ( PluginTree.TreeNode node in tree )
+            {
+                node.value.Init();
             }
 
             return plugins;
 
         }
+
+        private void ValidateRequirements()
+        {
+            var pc = new List<PluginContainer>(plugins);
+
+            IEnumerable<PluginTree.TreeNode> leaves;
+            do
+            {
+                leaves = tree.leaves.ToList();
+                foreach ( var leaf in leaves.ToArray() )
+                {
+                    var p = pc.ToList();
+                    foreach ( var container in p )
+                    {
+                        if ( leaf.value.ID == container.Requirement )
+                        {
+                            tree.Add(new PluginTree.TreeNode(leaf, container));
+                            pc.Remove(container);
+                        }
+                    }
+                }
+            } while ( leaves.Equals(tree.leaves));
+
+            foreach ( PluginContainer container in pc )
+            {
+                foreach ( var node in tree )
+                {
+                    if ( node.value == container )
+                    {
+                        Logger.Instance.info($"plugin {container.ID} was removed for Invalid requirement");
+                        tree.Remove(node);
+                        container.State = ContainerState.INVALID_REQUIREMENT;
+                    }
+                }
+                
+            }
+        }
+
+        private void ValidateDependencies()
+        {
+            while ( true )
+            {
+                var shouldRevalidate = false;
+                var enu = tree.ToList();
+                foreach ( PluginTree.TreeNode node in enu )
+                {
+                    if ( node.value.Dependencies == null || node.value.Dependencies.Length == 0 )
+                    {
+                        continue;
+                    }
+
+                    var deps = new List<string>(node.value.Dependencies);
+                    foreach ( string dep in deps )
+                    {
+                        foreach ( PluginTree.TreeNode container in tree )
+                        {
+                            if ( dep == container.value.ID )
+                            {
+                                deps.Remove(dep);
+
+                                break;
+                            }
+                        }
+                    }
+
+                    if ( deps.Count > 0 )
+                    {
+                        tree.Remove(node);
+                        Logger.Instance.info($"plugin {node.value.ID} was removed for Invalid dependency");
+                        node.value.State = ContainerState.INVALID_DEPENDENCY;
+                        shouldRevalidate = true;
+                    }
+
+                }
+
+                if ( shouldRevalidate )
+                {
+                    continue;
+                }
+
+                break;
+            }
+        }
+
     }
 }

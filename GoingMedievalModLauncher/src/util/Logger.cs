@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
 using NSEipix.Base;
-using NSMedieval.StatsSystem;
-using UnityEngine;
 
 namespace GoingMedievalModLauncher
 {

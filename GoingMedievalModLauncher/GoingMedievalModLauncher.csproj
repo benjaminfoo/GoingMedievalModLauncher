@@ -79,9 +79,11 @@
         <Compile Include="src\Launcher.cs" />
         <Compile Include="src\MonoScripts\BarrelBuildableView.cs" />
         <Compile Include="src\plugins\IPlugin.cs" />
+        <Compile Include="src\plugins\ManifestClass.cs" />
         <Compile Include="src\plugins\PluginComponent.cs" />
         <Compile Include="src\plugins\PluginContainer.cs" />
         <Compile Include="src\plugins\PluginManager.cs" />
+        <Compile Include="src\plugins\PluginTree.cs" />
         <Compile Include="src\ui\MainMenuPatch.cs" />
         <Compile Include="src\ui\ModManagerLogWindow.cs" />
         <Compile Include="src\ui\ModManagerWindow.cs" />

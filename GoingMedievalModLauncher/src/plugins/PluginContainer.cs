@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using NSEipix.Base;
 using NSEipix.ObjectMapper;
 using NSEipix.Repository;
-using NSMedieval.Construction;
 using NSMedieval.Crops;
 using NSMedieval.Model;
 using NSMedieval.Production;
@@ -20,11 +19,73 @@ using UnityEngine;
 
 namespace GoingMedievalModLauncher.plugins
 {
+
+
+	public enum ContainerState
+	{
+
+		NIL,
+		ACTIVE,
+		INACTIVE,
+		INVALID_REQUIREMENT,
+		INVALID_DEPENDENCY
+
+	}
+
+	public interface IPluginContainer
+	{
+
+		IPlugin plugin { get; }
+
+		/// <summary>
+		/// The name of the plugin / mod.
+		/// </summary>
+		string Name { get; }
+		
+		/// <summary>
+		/// The id of plugin / mod.
+		/// </summary>
+		string ID { get; }
+
+		/// <summary>
+		/// A alphanumeric string which describes the functionality of the plugin / mod.
+		/// </summary>
+		string Description { get; }
+
+		/// <summary>
+		/// A alphanumeric string which describes the version of the plugin / mod.
+		/// </summary>
+		string Version { get; }
+		
+		string Requirement { get;  }
+		
+		string[] Dependencies { get; }
+
+		/// <summary>
+		/// a boolean variable which indicates that the mod is active or not
+		/// </summary>
+		bool ActiveState
+		{
+			get;
+			set;
+
+		}
+
+		ContainerState State
+		{
+			get;
+			set;
+		}
+
+		void Init();
+
+	}
+	
 	
 	/// <summary>
 	/// A class that contains a plugin.
 	/// </summary>
-	public class PluginContainer
+	public class PluginContainer : IPluginContainer
 	{
 		
 
@@ -46,7 +107,7 @@ namespace GoingMedievalModLauncher.plugins
 		/// <summary>
 		/// The plugin's code if needed.
 		/// </summary>
-		public readonly IPlugin plugin;
+		public IPlugin plugin { get; }
 
 		/// <summary>
 		/// The name of the plugin / mod.
@@ -67,13 +128,39 @@ namespace GoingMedievalModLauncher.plugins
 		/// A alphanumeric string which describes the version of the plugin / mod.
 		/// </summary>
 		public string Version { get; }
+		
+		public string Requirement { get;  }
+		
+		public string[] Dependencies { get; }
 
 		/// <summary>
 		/// a boolean variable which indicates that the mod is active or not
 		/// </summary>
-		public bool ActiveState { get; set; }
+		public bool ActiveState
+		{
+			get => State == ContainerState.ACTIVE;
+			set => State = value ? ContainerState.ACTIVE : ContainerState.INACTIVE;
 
-		protected PluginContainer(DirectoryInfo path, Dictionary<string, string> manifest)
+		}
+
+		public ContainerState State
+		{
+			get => _state;
+			set
+			{
+				if ( _state != ContainerState.NIL && _state != ContainerState.ACTIVE
+				                                  && _state != ContainerState.INACTIVE ) return;
+
+				if ( _state == ContainerState.NIL || value == ContainerState.ACTIVE || value == ContainerState.INACTIVE )
+				{
+					_state = value;
+				}
+			}
+		}
+
+		private ContainerState _state;
+
+		private PluginContainer(DirectoryInfo path, ManifestClass manifest)
 		{
 			if ( path != null )
 			{
@@ -97,15 +184,16 @@ namespace GoingMedievalModLauncher.plugins
 			if ( manifest != null )
 			{
 				//required data
-				ID = manifest["id"];
-				Version = manifest["version"];
+				ID = manifest.id;
+				Version = manifest.version;
 				//optional data
-				Name =  manifest.TryGetValue("name", out string name) ? name : ID;
-				Description = manifest.TryGetValue("description", out string desc) ? desc: "";
-				
-				//For the invalid plugin
-				ActiveState = true;
+				Name =  manifest.name ?? ID;
+				Description = manifest.description;
+				Requirement = manifest.requirement;
+				Dependencies = manifest.dependencies;
 			}
+
+			_state = ContainerState.ACTIVE;
 
 			if ( _code != null )
 			{
@@ -427,8 +515,26 @@ namespace GoingMedievalModLauncher.plugins
 				
 			}
 		}
+
+		public virtual void Init()
+		{
+			if ( !LoadLanguageFile() )
+			{
+				Logger.Instance.info("An error occured while loading the language file.");
+			}
+
+			LoadAssetsBundles();
+			
+			RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
+			
+			RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>();
+			RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>();
+			RegisterJsonRepositoryLoaderWithIdField<ProductionRepository, Production>("productionId");
+
+			RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>();
+		}
 		
-		public static PluginContainer Create(DirectoryInfo dir)
+		public static IPluginContainer Create(DirectoryInfo dir)
 		{
 			Logger.Instance.info("Creating plugin container for: " + dir.Name);
 			
@@ -443,32 +549,17 @@ namespace GoingMedievalModLauncher.plugins
 			
 			//Load up the manifest
 
-			var manifest = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+			var manifest = JsonConvert.DeserializeObject<ManifestClass>(
 				manifestf[0].OpenText().ReadToEnd());
 			
 			//Now, searching for the necessary fields in the manifest.
-			if ( !manifest.ContainsKey("id") || !manifest.ContainsKey("version") )
+			if ( manifest.id == null || manifest.version == null )
 			{
 				return InvalidPluginContainer.Instance;
 			}
 			
 			//created the container, that will be returned.
 			var container = new PluginContainer(dir, manifest);
-
-			if ( !container.LoadLanguageFile() )
-			{
-				Logger.Instance.info("An error occured while loading the language file.");
-			}
-
-			container.LoadAssetsBundles();
-			
-			container.RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
-			
-			container.RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>();
-			container.RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>();
-			container.RegisterJsonRepositoryLoaderWithIdField<ProductionRepository, Production>("productionId");
-
-			container.RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>();
 
 			return container;
 
@@ -480,16 +571,46 @@ namespace GoingMedievalModLauncher.plugins
 	/// <summary>
 	/// An invalid plugins container;
 	/// </summary>
-	public class InvalidPluginContainer : PluginContainer
+	public class InvalidPluginContainer : Singleton<InvalidPluginContainer>, IPluginContainer
 	{
 
-		public static readonly InvalidPluginContainer Instance = new InvalidPluginContainer();
-
-		private InvalidPluginContainer() : base(null, null)
+		public IPlugin plugin => null;
+		public string Name => "INVALID";
+		public string ID => "INVALID";
+		public string Description=> "INVALID";
+		public string Version => "INVALID";
+		public string Requirement => "INVALID";
+		public string[] Dependencies => null;
+		public bool ActiveState { get => false; set{} }
+		public ContainerState State { get=>ContainerState.INACTIVE; set{} }
+		public void Init()
 		{
-			//invalid plugins are not active
-			ActiveState = false;
+			throw new NotImplementedException();
 		}
+		
+		private InvalidPluginContainer(){}
+
+	}
+
+	public class ModLoaderPluginContainer : Singleton<ModLoaderPluginContainer>, IPluginContainer
+	{
+
+		public string Version => "v0.0.2";
+		public string Requirement => "";
+		public string[] Dependencies => null;
+		public bool ActiveState { get=> true; set{} }
+		public ContainerState State { get=> ContainerState.ACTIVE; set{} }
+
+		public string ID => "modloader";
+		public string Description => "The core of the modding.";
+		public IPlugin plugin => null;
+		public string Name => "Mod Loader";
+		
+		public void Init()
+		{
+		}
+		
+		private ModLoaderPluginContainer(){}
 
 	}
 
