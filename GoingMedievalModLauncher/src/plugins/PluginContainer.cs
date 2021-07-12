@@ -97,6 +97,8 @@ namespace GoingMedievalModLauncher.plugins
 		/// Indicates that the launcher should not search in the assets directory
 		/// </summary>
 		bool CodeOnly { get; }
+		
+		bool NoCode { get; }
 
 		void Init();
 
@@ -161,6 +163,8 @@ namespace GoingMedievalModLauncher.plugins
 			}
 		}
 
+		public bool NoCode { get; }
+
 		/// <summary>
 		/// The backing variable of the State property.
 		/// </summary>
@@ -200,17 +204,19 @@ namespace GoingMedievalModLauncher.plugins
 				Requirement = manifest.requirement;
 				Dependencies = manifest.dependencies;
 				CodeOnly = manifest.codeOnly;
+				NoCode = manifest.noCode;
+
 			}
 
 			_state = ContainerState.ACTIVE;
 
-			if ( _code != null )
+			if ( !NoCode && _code != null )
 			{
 				ICollection<Assembly> assemblies = new List<Assembly>();
 				// load all the assemblies from the directory
 				foreach ( FileInfo dllFile in _code.GetFiles("*.dll") )
 				{
-					Logger.Instance.info("Found dll: " + dllFile + " ...");
+					Launcher.LOGGER.Info("Found dll: " + dllFile + " ...");
 					AssemblyName an = AssemblyName.GetAssemblyName(dllFile.FullName);
 					Assembly assembly = Assembly.Load(an);
 					assemblies.Add(assembly);
@@ -226,11 +232,25 @@ namespace GoingMedievalModLauncher.plugins
 					{
 						if ( assembly != null )
 						{
-							Type[] types = assembly.GetTypes();
+							Type[] types = new Type[0];
+							try
+							{
+								types = assembly.GetTypes();
+							}
+							catch (ReflectionTypeLoadException e)
+							{
+								Launcher.LOGGER.Info("There were some class type that the launcher"
+								                            + "could not load. Trying to find the class anyways.");
+								if ( e.Types != null )
+								{
+									types = e.Types;
+								}
+								
+							}
 							foreach ( Type type in types )
 							{
 
-								if ( type.IsInterface || type.IsAbstract )
+								if ( type == null || type.IsInterface || type.IsAbstract )
 								{
 									continue;
 								}
@@ -249,21 +269,21 @@ namespace GoingMedievalModLauncher.plugins
 				}
 				catch (Exception e)
 				{
-					Logger.Instance.info("Unable to get Plugin's type. Maybe the ode is referencing an older launcher?");
-					Logger.Instance.info(e.ToString());
+					Launcher.LOGGER.Info("Unable to get Plugin's type. Maybe the code is referencing an older launcher?");
+					Launcher.LOGGER.Info(e.ToString());
 					
 				}
 
 				//TODO: more erros?
 				if ( validPlugins.Count == 0 )
 				{
-					Logger.Instance.info("No valid plugin were found for this directory.");
+					Launcher.LOGGER.Info("No valid plugin were found for this directory.");
 					ActiveState = false;
 
 				}
 				else if ( validPlugins.Count > 2 )
 				{
-					Logger.Instance.info("More than two plugins were found in this directory!");
+					Launcher.LOGGER.Info("More than two plugins were found in this directory!");
 					ActiveState = false;
 				}
 				else
@@ -277,22 +297,26 @@ namespace GoingMedievalModLauncher.plugins
 					}
 					catch (Exception e)
 					{
-						Logger.Instance.info("An error happened initalizting a plugin!\n" + e);
+						Launcher.LOGGER.Info("An error happened initalizting a plugin!\n" + e);
 					}
 
 					plugin = instance;
 				}
+			}
+			else
+			{
+				plugin = null;
 			}
 		}
 
 		private bool LoadLanguageFile()
 		{
 			
-			Logger.Instance.info("Loading language file for: " + Name);
+			Launcher.LOGGER.Info("Loading language file for: " + Name);
 
 			if ( _assest == null )
 			{
-				Logger.Instance.info("Unable to load language file from nonexistent directory!");
+				Launcher.LOGGER.Info("Unable to load language file from nonexistent directory!");
 				return false;
 			}
 			
@@ -308,7 +332,7 @@ namespace GoingMedievalModLauncher.plugins
 			if ( langFile == null )
 			{
 				//No language file was found.
-				Logger.Instance.info("No langugae file was found for: " + Name);
+				Launcher.LOGGER.Info("No langugae file was found for: " + Name);
 				return true;
 			}
 
@@ -349,7 +373,7 @@ namespace GoingMedievalModLauncher.plugins
 			//If the file does not exist, log it, and return false
 			if ( json == null || !json.Exists )
 			{
-				Logger.Instance.info("The file was null, or empty so the repository can ot be loaded.");
+				Launcher.LOGGER.Info("The file was null, or empty so the repository can ot be loaded.");
 				return false;
 			}
 
@@ -358,7 +382,7 @@ namespace GoingMedievalModLauncher.plugins
 					.Instance | BindingFlags.NonPublic);
 			if ( desInfo == null )
 			{
-				Logger.Instance.info("Unable to get the serializer method. How did this happened?");
+				Launcher.LOGGER.Info("Unable to get the serializer method. How did this happened?");
 				return false;
 			}
 			// With RepositoryDto we can easily deserialize
@@ -366,7 +390,7 @@ namespace GoingMedievalModLauncher.plugins
 				desInfo.Invoke(repo, new object[]{json.FullName}) as ISerializer<RepositoryDto<M>>;
 			if ( deserializer == null )
 			{
-				Logger.Instance.info("The serializer returned was null. This should happen.");
+				Launcher.LOGGER.Info("The serializer returned was null. This should happen.");
 				return false;
 			}
 			dto = deserializer.Deserialize();
@@ -374,13 +398,13 @@ namespace GoingMedievalModLauncher.plugins
 
 			if ( id == null )
 			{
-				Logger.Instance.info("The id of the model class does not exist.");
+				Launcher.LOGGER.Info("The id of the model class does not exist.");
 				return false;
 			}
 
 			if ( dto == null )
 			{
-				Logger.Instance.info("Can not get the dto. Is the json valid? Can be deserialized?");
+				Launcher.LOGGER.Info("Can not get the dto. Is the json valid? Can be deserialized?");
 
 				return false;
 			}
@@ -402,7 +426,7 @@ namespace GoingMedievalModLauncher.plugins
 			where T : JsonRepository<T, M>
 			where M : Model
 		{
-			Logger.Instance.info(
+			Launcher.LOGGER.Info(
 				"Adding register event for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 			RepositoryPatch<T, M>.PostDeserialization +=
 				delegate(T repo)
@@ -411,13 +435,13 @@ namespace GoingMedievalModLauncher.plugins
 					//If the assets directory is not exist, we won't be able to find the file
 					if ( _assest == null )
 					{
-						Logger.Instance.info(
+						Launcher.LOGGER.Info(
 							"Assets directory was null on loading repository: <"
 							+ typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 						return;
 					}
 
-					Logger.Instance.info(
+					Launcher.LOGGER.Info(
 						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 
 					//Get the overriden JsonFile method, that return the relative path to the json file
@@ -425,7 +449,7 @@ namespace GoingMedievalModLauncher.plugins
 
 					if ( _jsonFile == null )
 					{
-						Logger.Instance.info("Unable to get the protected method \"JsonFile\".");
+						Launcher.LOGGER.Info("Unable to get the protected method \"JsonFile\".");
 						return;
 					}
 
@@ -436,7 +460,7 @@ namespace GoingMedievalModLauncher.plugins
 					{
 						foreach ( var item in rooms.Repository )
 						{
-							Logger.Instance.info($"Added item {item.GetID()} to repository {typeof(T).Name}");
+							Launcher.LOGGER.Info($"Added item {item.GetID()} to repository {typeof(T).Name}");
 							repo.Add(item);
 						}
 					}
@@ -448,7 +472,7 @@ namespace GoingMedievalModLauncher.plugins
 			where T : JsonRepository<T, M>
 			where M : Model
 		{
-			Logger.Instance.info(
+			Launcher.LOGGER.Info(
 				"Adding register event for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 			RepositoryPatch<T, M>.PostDeserialization +=
 				delegate(T repo)
@@ -457,13 +481,13 @@ namespace GoingMedievalModLauncher.plugins
 					//If the assets directory is not exist, we won't be able to find the file
 					if ( _assest == null )
 					{
-						Logger.Instance.info(
+						Launcher.LOGGER.Info(
 							"Assets directory was null on loading repository: <"
 							+ typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 						return;
 					}
 
-					Logger.Instance.info(
+					Launcher.LOGGER.Info(
 						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 
 					//Get the overriden JsonFile method, that return the relative path to the json file
@@ -471,7 +495,7 @@ namespace GoingMedievalModLauncher.plugins
 
 					if ( _jsonFile == null )
 					{
-						Logger.Instance.info("Unable to get the protected method \"JsonFile\".");
+						Launcher.LOGGER.Info("Unable to get the protected method \"JsonFile\".");
 						return;
 					}
 
@@ -482,7 +506,7 @@ namespace GoingMedievalModLauncher.plugins
 					{
 						foreach ( var item in rooms.Repository )
 						{
-							Logger.Instance.info($"Added item {item.GetID()} to repository {typeof(T).Name}");
+							Launcher.LOGGER.Info($"Added item {item.GetID()} to repository {typeof(T).Name}");
 							repo.Add(item);
 						}
 					}
@@ -506,7 +530,7 @@ namespace GoingMedievalModLauncher.plugins
 				if(bundle == null)
 					continue;
 				
-				Logger.Instance.info($"Bundle: {bundle.name}");
+				Launcher.LOGGER.Info($"Bundle: {bundle.name}");
 
 				bundle.LoadAllAssets();
 
@@ -519,7 +543,7 @@ namespace GoingMedievalModLauncher.plugins
 						mapper.AddComponent<BarrelBuildableView>();
 						repository.Add(new KeyGameObjectPair($"{ID}:{mapper.name}", mapper));
 						repository.Add(new KeyGameObjectPair($"{ID}:{mapper.name}_preview", mapper));
-						Logger.Instance.info($"#{ID}:{mapper.name}");
+						Launcher.LOGGER.Info($"#{ID}:{mapper.name}");
 					};
 				}
 				
@@ -528,15 +552,17 @@ namespace GoingMedievalModLauncher.plugins
 
 		public virtual void Init()
 		{
+			if ( CodeOnly ) return;
+
 			if ( !LoadLanguageFile() )
 			{
-				Logger.Instance.info("An error occured while loading the language file.");
+				Launcher.LOGGER.Info("An error occured while loading the language file.");
 			}
 
 			LoadAssetsBundles();
-			
+
 			RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
-			
+
 			RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>();
 			RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>();
 			RegisterJsonRepositoryLoaderWithIdField<ProductionRepository, Production>("productionId");
@@ -546,14 +572,14 @@ namespace GoingMedievalModLauncher.plugins
 		
 		public static IPluginContainer Create(DirectoryInfo dir)
 		{
-			Logger.Instance.info("Creating plugin container for: " + dir.Name);
+			Launcher.LOGGER.Info("Creating plugin container for: " + dir.Name);
 			
 			//Get the manifest.json file(s).
 			var manifestf = dir.GetFiles("manifest.json");
 
 			if ( manifestf.Length <= 0 )
 			{
-				Logger.Instance.info("Unable to find manifest file for: "+dir.Name);
+				Launcher.LOGGER.Info("Unable to find manifest file for: "+dir.Name);
 				return InvalidPluginContainer.Instance;
 			}
 			
@@ -561,9 +587,11 @@ namespace GoingMedievalModLauncher.plugins
 
 			var manifest = JsonConvert.DeserializeObject<ManifestClass>(
 				manifestf[0].OpenText().ReadToEnd());
-			
-			//Now, searching for the necessary fields in the manifest.
-			if ( manifest.id == null || manifest.version == null )
+
+			var m = JsonConvert.DeserializeObject(manifestf[0].OpenText().ReadToEnd());
+
+			//Now, searching for the necessary fields in the manifest and colliding fields.
+			if ( manifest.id == null || manifest.version == null  || manifest.codeOnly && manifest.noCode)
 			{
 				return InvalidPluginContainer.Instance;
 			}
@@ -594,6 +622,7 @@ namespace GoingMedievalModLauncher.plugins
 		public bool ActiveState { get => false; set{} }
 		public ContainerState State { get=>ContainerState.INACTIVE; set{} }
 		public bool CodeOnly => false;
+		public bool NoCode => true;
 
 		public void Init()
 		{
@@ -622,6 +651,8 @@ namespace GoingMedievalModLauncher.plugins
 		public string Name => "Mod Loader";
 
 		public bool CodeOnly => true;
+
+		public bool NoCode => false;
 
 		public void Init()
 		{

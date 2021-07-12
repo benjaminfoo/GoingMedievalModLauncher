@@ -46,28 +46,28 @@ namespace GoingMedievalModLauncher.Engine
         {
             if ( tb == null || tb.BaseType == null )
             {
-                Logger.Instance.info("Type Builder was not specified or was imvalid!");
+                Launcher.LOGGER.Info("Type Builder was not specified or was imvalid!");
                 return;
             }
             
-            Logger.Instance.info(typeof(T).Name);
+            Launcher.LOGGER.Info(typeof(T).Name);
             var orig = tb.BaseType.GetMethod("Deserialize", BindingFlags.NonPublic | BindingFlags.Instance);
             if ( orig == null )
             {
-                Logger.Instance.info("The original method was null! Trying with public member.");
+                Launcher.LOGGER.Info("The original method was null! Trying with public member.");
                 orig = tb.BaseType.GetMethod("Deserialize", BindingFlags.Public | BindingFlags.Instance);
             }
 
             if ( orig == null )
             {
-                Logger.Instance.info("The original method is still null! Nothing we can do.");
+                Launcher.LOGGER.Info("The original method is still null! Nothing we can do.");
                 return;
             }
             var ev = typeof(RepositoryPatch<T, M>).GetMethod(
                 "CallEvent", BindingFlags.Public | BindingFlags.Static);
             if ( ev == null )
             {
-                Logger.Instance.info("The event caller was null! How?");
+                Launcher.LOGGER.Info("The event caller was null! How?");
                 return;
             }
 

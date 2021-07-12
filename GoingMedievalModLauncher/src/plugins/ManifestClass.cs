@@ -6,20 +6,23 @@ namespace GoingMedievalModLauncher.plugins
 	public class ManifestClass
 	{
 
-		public string id { get; set; }
-		public string version { get; set; }
-		public string name {get; set; }
-		
-		public string description { get; set; }
-		public string requirement { get; set; }
-		public string[] dependencies { get; set; }
-		public bool codeOnly { get; set; }
+		public string id;
+		public string version;
+		public string name;
+
+		public string description;
+		public string requirement;
+		public string[] dependencies;
+		public bool codeOnly;
+		public bool noCode;
 
 		public ManifestClass()
 		{
 			description = "";
 			requirement = ModLoaderPluginContainer.Instance.ID;
 			dependencies = new string[0];
+			codeOnly = false;
+			noCode = false;
 		}
 
 	}

@@ -31,6 +31,13 @@
         <Copy SourceFiles="manifest.json" DestinationFolder="$(ModDir)" />
         <Copy SourceFiles="@(ASSETS)" DestinationFolder="$(Assets)\%(RecursiveDir)" Condition="Exists(assets)" />
     </Target>
+    <ItemGroup>
+        <ProjectReference Include="..\GoingMedievalModLauncher\GoingMedievalModLauncher.csproj">
+            <Project>{91aecc71-ab38-4e60-bc8d-34263b818a39}</Project>
+            <Name>GoingMedievalModLauncher</Name>
+            <Private>False</Private>
+        </ProjectReference>
+    </ItemGroup>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">

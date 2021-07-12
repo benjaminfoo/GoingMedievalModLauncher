@@ -19,13 +19,13 @@ namespace GoingMedievalModLauncher.plugins
 
         void Start()
         {
-            if(pluginImpl == null || !pluginImpl.ActiveState) return;
+            if(pluginImpl == null || !pluginImpl.ActiveState || pluginImpl.plugin == null) return;
             pluginImpl.plugin.start(this);
         }
 
         void Update()
         {
-            if(pluginImpl == null || !pluginImpl.ActiveState) return;
+            if(pluginImpl == null || !pluginImpl.ActiveState|| pluginImpl.plugin == null) return;
             pluginImpl.plugin.update(this);
         }
 

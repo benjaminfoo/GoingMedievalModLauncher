@@ -14,6 +14,7 @@ using NSMedieval.Repository;
 using NSMedieval.Research;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Logger = NLog.Logger;
 using Object = UnityEngine.Object;
 
 namespace GoingMedievalModLauncher
@@ -26,6 +27,8 @@ namespace GoingMedievalModLauncher
     {
         // is the startup of the launcher already done?
         private static bool _startupFinished;
+
+        internal static readonly Logger LOGGER = LoggingManager.getLogger<Launcher>();
 
         // the entry point of the code execution
         public static void Main()
@@ -83,15 +86,15 @@ namespace GoingMedievalModLauncher
                     typeof(RoomTypeRepository).GetField
                         ("roomDetectionMaterial", BindingFlags.Instance | BindingFlags.NonPublic)
                 });
+            LOGGER.Info("The room repository was replaced with a patched one.");
             ReplaceComponent<ResourceRepository, Resource>();
-            Logger.Instance.info("The resource repository was replaced with a patched one.");
-            Logger.Instance.info("The room repository was replaced with a patched one.");
+            LOGGER.Info("The resource repository was replaced with a patched one.");
             ReplaceComponent<ResearchRepository, ResearchModel>();
-            Logger.Instance.info("The research repository was replaced with a patched one.");
+            LOGGER.Info("The research repository was replaced with a patched one.");
             ReplaceComponent<CropfieldRepository, Cropfield>();
-            Logger.Instance.info("The crop field repository was replaced with a patched one.");
+            LOGGER.Info("The crop field repository was replaced with a patched one.");
             ReplaceComponent<ProductionRepository, Production>();
-            Logger.Instance.info("The resource repository was replaced with a patched one.");
+            LOGGER.Info("The resource repository was replaced with a patched one.");
         }
 
         /*
@@ -100,7 +103,7 @@ namespace GoingMedievalModLauncher
          */
         public static void Startup(Scene arg0, LoadSceneMode arg1)
         {
-            Logger.Instance.info("Initializing mod-loader!");
+            LOGGER.Info("Initializing mod-loader!");
 
             if (_startupFinished) return;
 
@@ -119,28 +122,28 @@ namespace GoingMedievalModLauncher
             }
             catch (Exception e)
             {
-                Logger.Instance.info("Error happened while loading patches.\n" + e);
+                LOGGER.Info("Error happened while loading patches.\n" + e);
                 throw;
             }
             
             try
             {
 
-                Logger.Instance.info("Mod-loader thread is running ...");
+                LOGGER.Info("Mod-loader thread is running ...");
 
                 // create a gameObject which we can use as a root reference to the scene-graph
                 var modLoaderObject = new GameObject {name = "ModLoader"};
                 modLoaderObject.AddComponent<EngineLauncher>();
                     
                 // print out a nice little confirmation message that the plugin has been loaded
-                Logger.Instance.info("... initialization thread has been finished!");
+                LOGGER.Info("... initialization thread has been finished!");
                 
                 Singleton<PluginManager>.Instance.loadAssemblies();
             }
             catch (Exception e)
             {
-                Logger.Instance.info("An error occured: \n");
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info("An error occured: \n");
+                LOGGER.Info(e.ToString());
                 throw;
             }
 

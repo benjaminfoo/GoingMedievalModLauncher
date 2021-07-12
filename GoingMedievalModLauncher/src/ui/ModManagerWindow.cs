@@ -98,18 +98,23 @@ namespace GoingMedievalModLauncher.ui
                     
                     if (pluginc.ActiveState)
                     {
-                        Logger.Instance.info("Enabling plugin \"" + pluginc.Name + "\" ...");
-                        pluginc.plugin.initialize();
-                        pluginc.plugin.start(this);
-                        
+                        Launcher.LOGGER.Info("Enabling plugin \"" + pluginc.Name + "\" ...");
+                        if ( pluginc.plugin != null )
+                        {
+                            pluginc.plugin.initialize();
+                            pluginc.plugin.start(this);
+                        }
+
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOn");
                     }
                     else
                     {
-                        Logger.Instance.info("Disabling plugin \"" + pluginc.Name + "\" ...");
+                        Launcher.LOGGER.Info("Disabling plugin \"" + pluginc.Name + "\" ...");
 
-                        pluginc.plugin.disable(this);
-                        pluginc.ActiveState = false;
+                        if ( pluginc.plugin != null )
+                        {
+                            pluginc.plugin.disable(this);
+                        }
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOff");
                     }
                 }

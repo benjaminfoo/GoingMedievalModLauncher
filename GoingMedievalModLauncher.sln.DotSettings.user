@@ -28,6 +28,6 @@
   &lt;Assembly Path="d:\Games\Steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\Assembly-CSharp.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=990eeee2_002Da801_002D4ee9_002Db89a_002De53192219438_0023common/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=d30ebdb9_002D6caf_002D47d3_002D9ae0_002D0675be5de811_0023references_002Ecommon/@EntryIndexedValue">True</s:Boolean>
+	
 	
 	</wpf:ResourceDictionary>

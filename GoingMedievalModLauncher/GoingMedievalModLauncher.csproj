@@ -42,7 +42,7 @@
         <Compile Include="src\ui\ModManagerWindow.cs" />
         <Compile Include="src\ui\PromptQueue.cs" />
         <Compile Include="src\ui\UIWindow.cs" />
-        <Compile Include="src\util\Logger.cs" />
+        <Compile Include="src\util\LoggingManager.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="dist\doorstop_config.ini" />
@@ -55,7 +55,8 @@
       <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="NLog" Version="4.7.10" />
+        <PackageReference Include="NLog" Version="4.7.10" />
+        <PackageReference Include="Lib.Harmony" Version="2.1.0" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

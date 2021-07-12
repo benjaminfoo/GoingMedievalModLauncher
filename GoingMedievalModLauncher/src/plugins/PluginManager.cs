@@ -28,7 +28,7 @@ namespace GoingMedievalModLauncher.plugins
         {
             // The directory where all assemblies / plugins / mods have to be stored
             DirectoryInfo dir = new DirectoryInfo(@"./mods");
-            Logger.Instance.info("Looking for plugins in " + dir.FullName + " ...");
+            Launcher.LOGGER.Info("Looking for plugins in " + dir.FullName + " ...");
             
             foreach ( var pluginDir in dir.EnumerateDirectories() )
             {
@@ -80,7 +80,7 @@ namespace GoingMedievalModLauncher.plugins
                 {
                     if ( node.value == container )
                     {
-                        Logger.Instance.info($"plugin {container.ID} was removed for Invalid requirement");
+                        Launcher.LOGGER.Info($"plugin {container.ID} was removed for Invalid requirement");
                         tree.Remove(node);
                         container.State = ContainerState.INVALID_REQUIREMENT;
                     }
@@ -119,7 +119,7 @@ namespace GoingMedievalModLauncher.plugins
                     if ( deps.Count > 0 )
                     {
                         tree.Remove(node);
-                        Logger.Instance.info($"plugin {node.value.ID} was removed for Invalid dependency");
+                        Launcher.LOGGER.Info($"plugin {node.value.ID} was removed for Invalid dependency");
                         node.value.State = ContainerState.INVALID_DEPENDENCY;
                         shouldRevalidate = true;
                     }

@@ -6,14 +6,13 @@ using NLog;
 using NSEipix.Base;
 using NSMedieval;
 using UnityEngine;
-using Logger = GoingMedievalModLauncher.Logger;
 
 namespace CameraSettingsPlusPlus
 {
     public class CameraSettingsPlusPlus : IPlugin
     {
 
-        internal static NLog.Logger LOGGER =  LogManager.GetLogger( nameof(CameraSettingsPlusPlus));
+        internal static NLog.Logger LOGGER = LoggingManager.getLogger<CameraSettingsPlusPlus>();
         
         public float originalFarClip;
         public float originalHeightRangeMaxValue;

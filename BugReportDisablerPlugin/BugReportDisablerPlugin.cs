@@ -6,7 +6,6 @@ using NLog;
 using NSMedieval.Tools;
 using NSMedieval.Tools.Debug;
 using UnityEngine;
-using Logger = GoingMedievalModLauncher.Logger;
 
 namespace BugReportDisabler
 {
@@ -14,7 +13,7 @@ namespace BugReportDisabler
     public class BugReportDisablerPlugin : IPlugin
     {
 
-        internal NLog.Logger LOGGER = LogManager.GetLogger(nameof(BugReportDisablerPlugin));
+        internal NLog.Logger LOGGER = LoggingManager.getLogger<BugReportDisablerPlugin>();
 
         public void initialize()
         {
