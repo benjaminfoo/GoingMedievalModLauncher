@@ -13,6 +13,7 @@ namespace GoingMedievalModLauncher.plugins
 		public string description { get; set; }
 		public string requirement { get; set; }
 		public string[] dependencies { get; set; }
+		public bool codeOnly { get; set; }
 
 		public ManifestClass()
 		{

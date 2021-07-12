@@ -2,6 +2,7 @@
 using GoingMedievalModLauncher;
 using GoingMedievalModLauncher.plugins;
 using HarmonyLib;
+using NLog;
 using NSMedieval.Tools;
 using NSMedieval.Tools.Debug;
 using UnityEngine;
@@ -12,27 +13,19 @@ namespace BugReportDisabler
     
     public class BugReportDisablerPlugin : IPlugin
     {
-        
-        public string Name => "Bug-Report Disabler";
 
-        public string Description => "Disables the sending of error-reports.";
-        public string ID => "bugreport_begone";
-        public string Version => "v0.0.2";
-        public bool activeState { get; set; }
+        internal NLog.Logger LOGGER = LogManager.GetLogger(nameof(BugReportDisablerPlugin));
 
         public void initialize()
         {
-            activeState = true;
         }
 
         public void start(MonoBehaviour root)
         {
-            if(!activeState) return;
-            
             try
             {
                 // disable the bug reporter
-                Logger.Instance.info("Disabling error reports ...");
+                LOGGER.Info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(true);
@@ -41,7 +34,7 @@ namespace BugReportDisabler
             }
             catch (Exception e)
             {
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info(e.ToString());
                 throw;
             }
             
@@ -58,7 +51,7 @@ namespace BugReportDisabler
             try
             {
                 // disable the bug reporter
-                Logger.Instance.info("Disabling error reports ...");
+                LOGGER.Info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(false);
@@ -67,7 +60,7 @@ namespace BugReportDisabler
             }
             catch (Exception e)
             {
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info(e.ToString());
                 throw;
             }
         }

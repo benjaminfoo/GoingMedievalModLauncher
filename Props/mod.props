@@ -1,0 +1,17 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="common.props" />
+    <PropertyGroup>
+        <ModDir>$(GameDir)\mods\$(MSBuildProjectName)</ModDir>
+        <ManagedBuildDir>$(ModDir)\code</ManagedBuildDir>
+        <Manifest>$(ModDir)\manifest.json</Manifest>
+        <Assets>$(ModDir)\assets</Assets>
+        <OutputPath>$(ModDir)\code</OutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\GoingMedievalModLauncher\GoingMedievalModLauncher.csproj">
+            <Project>{91aecc71-ab38-4e60-bc8d-34263b818a39}</Project>
+            <Name>GoingMedievalModLauncher</Name>
+            <Private>False</Private>
+        </ProjectReference>
+    </ItemGroup>
+</Project>

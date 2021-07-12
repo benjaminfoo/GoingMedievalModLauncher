@@ -1,5 +1,4 @@
-﻿using GoingMedievalModLauncher;
-using GoingMedievalModLauncher.plugins;
+﻿using GoingMedievalModLauncher.plugins;
 using HarmonyLib;
 using NSEipix.Base;
 using NSMedieval.Model.MapNew;
@@ -10,14 +9,8 @@ namespace AdditionalMapSizesPlugin
 {
     public class AdditionalMapSizesPlugin : IPlugin
     {
-        public string Name => "Additional Map Sizes";
-        public string Description => "Adds map sizes to the new-game map-selection screen.";
-        public string ID => "AdditionalMapSize";
-        public string Version => "v0.0.1";
-        public bool activeState { get; set; }
         public void initialize()
         {
-            activeState = true;
         }
 
         public void disable(MonoBehaviour root)
@@ -34,10 +27,10 @@ namespace AdditionalMapSizesPlugin
 
         public void start(MonoBehaviour root)
         {
-            add(create("16 x 16 - DEV", 16, 16, 16, 3));
-            add(create("128 x 128", 128, 16, 128, 3));
-            add(create("256 x 256", 256, 16, 256, 3));
-            add(create("512 x 512", 512, 16, 512, 3));
+            add(create("16 x 16 - DEV", 16, 16, 16 ));
+            add(create("128 x 128", 128, 16, 128 ));
+            add(create("256 x 256", 256, 16, 256 ));
+            add(create("512 x 512", 512, 16, 512 ));
         }
 
         public MapSize create(string name, int width, int height, int length, int blockHeight = 3)

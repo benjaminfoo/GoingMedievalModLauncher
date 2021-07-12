@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using GoingMedievalModLauncher.Engine;
@@ -47,7 +47,7 @@ namespace GoingMedievalModLauncher
             where M : Model
         {
             TypeBuilder b = DynamicRepositoryBuilder<T, M>.GetTypeBuilder(
-                $"Patched{typeof(T).Name}");
+                $"Patched_{typeof(T).Name}");
             DynamicRepositoryBuilder<T, M>.OverrideDeserialize(b);
             Type t = DynamicRepositoryBuilder<T, M>.CompileResultType(b);
             var comp = Object.FindObjectOfType<T>();
@@ -83,13 +83,13 @@ namespace GoingMedievalModLauncher
                     typeof(RoomTypeRepository).GetField
                         ("roomDetectionMaterial", BindingFlags.Instance | BindingFlags.NonPublic)
                 });
+            ReplaceComponent<ResourceRepository, Resource>();
+            Logger.Instance.info("The resource repository was replaced with a patched one.");
             Logger.Instance.info("The room repository was replaced with a patched one.");
             ReplaceComponent<ResearchRepository, ResearchModel>();
             Logger.Instance.info("The research repository was replaced with a patched one.");
             ReplaceComponent<CropfieldRepository, Cropfield>();
             Logger.Instance.info("The crop field repository was replaced with a patched one.");
-            ReplaceComponent<ResourceRepository, Resource>();
-            Logger.Instance.info("The resource repository was replaced with a patched one.");
             ReplaceComponent<ProductionRepository, Production>();
             Logger.Instance.info("The resource repository was replaced with a patched one.");
         }

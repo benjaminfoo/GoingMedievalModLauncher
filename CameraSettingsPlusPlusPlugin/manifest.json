@@ -1,0 +1,7 @@
+{
+  "id":"cameraPlusPlus",
+  "version":"v0.0.2",
+  "name": "Camera-Settings",
+  "description": "Increases rendering-, zoom- & shadow-distance - may slow down performance.",
+  "codeOnly": true
+}

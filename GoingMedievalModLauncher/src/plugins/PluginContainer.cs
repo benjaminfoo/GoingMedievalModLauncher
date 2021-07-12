@@ -10,12 +10,14 @@ using Newtonsoft.Json;
 using NSEipix.Base;
 using NSEipix.ObjectMapper;
 using NSEipix.Repository;
+using NSMedieval.Construction;
 using NSMedieval.Crops;
 using NSMedieval.Model;
 using NSMedieval.Production;
 using NSMedieval.Repository;
 using NSMedieval.Research;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace GoingMedievalModLauncher.plugins
 {
@@ -35,6 +37,9 @@ namespace GoingMedievalModLauncher.plugins
 	public interface IPluginContainer
 	{
 
+		/// <summary>
+		/// The plugin's code if needed.
+		/// </summary>
 		IPlugin plugin { get; }
 
 		/// <summary>
@@ -56,9 +61,17 @@ namespace GoingMedievalModLauncher.plugins
 		/// A alphanumeric string which describes the version of the plugin / mod.
 		/// </summary>
 		string Version { get; }
-		
+		/// <summary>
+		/// The required plugin of this plugin.
+		/// Only ONE requirement is valid, and if the requirement is not found, then the plugin's first phase isn't executed
+		/// </summary>
 		string Requirement { get;  }
 		
+		/// <summary>
+		/// The dependencies of the plugin
+		/// This array SHOULD NOT contain the requirement. If the dependency is not loaded then the plugin's first phase isn't executed
+		/// </summary>
+		/// TODO: Change it to second phase if we need a second phase.
 		string[] Dependencies { get; }
 
 		/// <summary>
@@ -71,11 +84,19 @@ namespace GoingMedievalModLauncher.plugins
 
 		}
 
+		/// <summary>
+		/// the state of the plugin. On loading it defaults to NIL.
+		/// </summary>
 		ContainerState State
 		{
 			get;
 			set;
 		}
+		
+		/// <summary>
+		/// Indicates that the launcher should not search in the assets directory
+		/// </summary>
+		bool CodeOnly { get; }
 
 		void Init();
 
@@ -104,45 +125,27 @@ namespace GoingMedievalModLauncher.plugins
 		/// </summary>
 		private readonly DirectoryInfo _code;
 		
-		/// <summary>
-		/// The plugin's code if needed.
-		/// </summary>
 		public IPlugin plugin { get; }
-
-		/// <summary>
-		/// The name of the plugin / mod.
-		/// </summary>
+		
 		public string Name { get; }
 		
-		/// <summary>
-		/// The id of plugin / mod.
-		/// </summary>
 		public string ID { get; }
-
-		/// <summary>
-		/// A alphanumeric string which describes the functionality of the plugin / mod.
-		/// </summary>
+		
 		public string Description { get; }
-
-		/// <summary>
-		/// A alphanumeric string which describes the version of the plugin / mod.
-		/// </summary>
+		
 		public string Version { get; }
 		
 		public string Requirement { get;  }
 		
 		public string[] Dependencies { get; }
-
-		/// <summary>
-		/// a boolean variable which indicates that the mod is active or not
-		/// </summary>
+		
 		public bool ActiveState
 		{
 			get => State == ContainerState.ACTIVE;
 			set => State = value ? ContainerState.ACTIVE : ContainerState.INACTIVE;
 
 		}
-
+		
 		public ContainerState State
 		{
 			get => _state;
@@ -158,7 +161,12 @@ namespace GoingMedievalModLauncher.plugins
 			}
 		}
 
+		/// <summary>
+		/// The backing variable of the State property.
+		/// </summary>
 		private ContainerState _state;
+		
+		public bool CodeOnly { get; }
 
 		private PluginContainer(DirectoryInfo path, ManifestClass manifest)
 		{
@@ -191,6 +199,7 @@ namespace GoingMedievalModLauncher.plugins
 				Description = manifest.description;
 				Requirement = manifest.requirement;
 				Dependencies = manifest.dependencies;
+				CodeOnly = manifest.codeOnly;
 			}
 
 			_state = ContainerState.ACTIVE;
@@ -220,6 +229,7 @@ namespace GoingMedievalModLauncher.plugins
 							Type[] types = assembly.GetTypes();
 							foreach ( Type type in types )
 							{
+
 								if ( type.IsInterface || type.IsAbstract )
 								{
 									continue;
@@ -571,7 +581,7 @@ namespace GoingMedievalModLauncher.plugins
 	/// <summary>
 	/// An invalid plugins container;
 	/// </summary>
-	public class InvalidPluginContainer : Singleton<InvalidPluginContainer>, IPluginContainer
+	public sealed class InvalidPluginContainer : Singleton<InvalidPluginContainer>, IPluginContainer
 	{
 
 		public IPlugin plugin => null;
@@ -583,6 +593,8 @@ namespace GoingMedievalModLauncher.plugins
 		public string[] Dependencies => null;
 		public bool ActiveState { get => false; set{} }
 		public ContainerState State { get=>ContainerState.INACTIVE; set{} }
+		public bool CodeOnly => false;
+
 		public void Init()
 		{
 			throw new NotImplementedException();
@@ -592,7 +604,10 @@ namespace GoingMedievalModLauncher.plugins
 
 	}
 
-	public class ModLoaderPluginContainer : Singleton<ModLoaderPluginContainer>, IPluginContainer
+	/// <summary>
+	/// The modloader's container that other mods/plugins can reference.
+	/// </summary>
+	public sealed class ModLoaderPluginContainer : Singleton<ModLoaderPluginContainer>, IPluginContainer
 	{
 
 		public string Version => "v0.0.2";
@@ -605,7 +620,9 @@ namespace GoingMedievalModLauncher.plugins
 		public string Description => "The core of the modding.";
 		public IPlugin plugin => null;
 		public string Name => "Mod Loader";
-		
+
+		public bool CodeOnly => true;
+
 		public void Init()
 		{
 		}
