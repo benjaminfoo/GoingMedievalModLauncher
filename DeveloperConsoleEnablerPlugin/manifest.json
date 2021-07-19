@@ -1,0 +1,7 @@
+{
+  "id":"DevConsoleEnabler",
+  "version":"v0.0.2",
+  "name": "Developer-Console enabler",
+  "description": "Enables the developer console.",
+  "codeOnly": true
+}

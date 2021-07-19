@@ -26,7 +26,7 @@ namespace GoingMedievalModLauncher.ui
 			var post = typeof(MainMenuPatch).GetMethod("Start", BindingFlags.Static | BindingFlags.NonPublic);
 			harmony.Patch(orig, postfix: new HarmonyMethod(post));
 			
-			Logger.Instance.info("MainMenuView Start was patched with postfix");
+			Launcher.LOGGER.Info("MainMenuView Start was patched with postfix");
 		}
 
 	}

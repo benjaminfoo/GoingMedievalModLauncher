@@ -1,19 +1,28 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using Assets.Scripts.Models;
 using GoingMedievalModLauncher.Engine;
 using GoingMedievalModLauncher.plugins;
 using GoingMedievalModLauncher.ui;
+using GoingMedievalModLauncher.util;
 using HarmonyLib;
 using NSEipix.Base;
 using NSEipix.Repository;
+using NSMedieval.Almanac;
 using NSMedieval.Crops;
+using NSMedieval.GameEventSystem;
 using NSMedieval.Model;
+using NSMedieval.Model.MapNew;
 using NSMedieval.Production;
 using NSMedieval.Repository;
 using NSMedieval.Research;
+using NSMedieval.StatsSystem;
+using NSMedieval.Weather;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Logger = NLog.Logger;
 using Object = UnityEngine.Object;
 
 namespace GoingMedievalModLauncher
@@ -22,23 +31,32 @@ namespace GoingMedievalModLauncher
      * The Launcher class of the mod-loader
      * This is the entry-point of code execution for GM
      */
-    public class Launcher
+    public static class Launcher
     {
         // is the startup of the launcher already done?
         private static bool _startupFinished;
+
+        internal static readonly Logger LOGGER = LoggingManager.GetLogger(typeof(Launcher));
+
+        private static readonly Dictionary<Type, object> Repositories = new Dictionary<Type, object>();
+
+        public static JsonRepository<T, M> getRepository<T, M>() where T : JsonRepository<T, M>
+            where M : Model
+        {
+            object it = Repositories[typeof(T)];
+            if ( it as T == null )
+            {
+                return null;
+            }
+
+            return it as JsonRepository<T, M>;
+        }
 
         // the entry point of the code execution
         public static void Main()
         {
             // we're hooking into the scene-manager to get a valid callback for executing our code 
             SceneManager.sceneLoaded += Startup;
-            SceneManager.sceneLoaded += delegate(Scene arg0, LoadSceneMode mode)
-            {
-                if ( arg0.name == "MainScene" )
-                {
-                    ReplaceRepositories();
-                }
-            };
         }
 
         //Be careful, reflection and lowlevel stuff
@@ -47,7 +65,7 @@ namespace GoingMedievalModLauncher
             where M : Model
         {
             TypeBuilder b = DynamicRepositoryBuilder<T, M>.GetTypeBuilder(
-                $"Patched{typeof(T).Name}");
+                $"Patched_{typeof(T).Name}");
             DynamicRepositoryBuilder<T, M>.OverrideDeserialize(b);
             Type t = DynamicRepositoryBuilder<T, M>.CompileResultType(b);
             var comp = Object.FindObjectOfType<T>();
@@ -70,37 +88,63 @@ namespace GoingMedievalModLauncher
                 {
                     fieldToCopy[i].SetValue(newComp, variables[i]);
                 }
+            
+            Repositories.Add(typeof(T), newComp);
 
         }
 
         //Be careful, reflection and lowlevel stuff
         private static void ReplaceRepositories()
         {
-
+            //Anything unrelated to Resources
             ReplaceComponent<RoomTypeRepository, RoomType>(
                 new[]
                 {
                     typeof(RoomTypeRepository).GetField
                         ("roomDetectionMaterial", BindingFlags.Instance | BindingFlags.NonPublic)
                 });
-            Logger.Instance.info("The room repository was replaced with a patched one.");
-            ReplaceComponent<ResearchRepository, ResearchModel>();
-            Logger.Instance.info("The research repository was replaced with a patched one.");
-            ReplaceComponent<CropfieldRepository, Cropfield>();
-            Logger.Instance.info("The crop field repository was replaced with a patched one.");
+            LOGGER.Info("The room repository was replaced with a patched one.");
+            //TODO: Free from the value
+            ReplaceComponent<ReligionRepository, ReligionConfig>();
+            LOGGER.Info("The religion repository was replaced with a patched one.");
+            
+            //Repositories that ad new resources (prefab, for example)
             ReplaceComponent<ResourceRepository, Resource>();
-            Logger.Instance.info("The resource repository was replaced with a patched one.");
+            LOGGER.Info("The resource repository was replaced with a patched one.");
+            //TODO: Adding custom event classes
+            ReplaceComponent<GameEventSettingsRepository, GameEvent>();
+            LOGGER.Info("The game event repository was replaced with a patched one.");
+            ReplaceComponent<EffectorRepository, StatEffector>();
+            LOGGER.Info("The effector repository was replaced with a patched one.");
+            ReplaceComponent<WoundsRepository, StatEffectorWound>();
+            LOGGER.Info("The wound effector repository was replaced with a patched one.");
+            ReplaceComponent<AlmanacRepository, Almanac>();
+            LOGGER.Info("The almanac effector repository was replaced with a patched one.");
+
+            //Repositories that require other ids/repositories
+            ReplaceComponent<EventGroupRepository, EventGroup>();
+            LOGGER.Info("The event group repository was replaced with a patched one.");
+            ReplaceComponent<ResearchRepository, ResearchModel>();
+            LOGGER.Info("The research repository was replaced with a patched one.");
+            ReplaceComponent<PlantPrefabRepository, PlantPrefabs>();
+            LOGGER.Info("The plant prefab repository was replaced with a patched one.");
+            ReplaceComponent<CropfieldRepository, Cropfield>();
+            LOGGER.Info("The crop field repository was replaced with a patched one.");
             ReplaceComponent<ProductionRepository, Production>();
-            Logger.Instance.info("The resource repository was replaced with a patched one.");
+            LOGGER.Info("The resource repository was replaced with a patched one.");
+            ReplaceComponent<WeatherEventRepository, WeatherEvent>();
+            LOGGER.Info("The weather repository was replaced with a patched one.");
+            ReplaceComponent<AlmanacEntriesRepository, AlmanacEntries>();
+            LOGGER.Info("The almanac entry effector repository was replaced with a patched one.");
         }
 
         /*
          * The startup of the launcher
          * This creates a native unity gameObject 
          */
-        public static void Startup(Scene arg0, LoadSceneMode arg1)
+        private static void Startup(Scene arg0, LoadSceneMode arg1)
         {
-            Logger.Instance.info("Initializing mod-loader!");
+            LOGGER.Info("Initializing mod-loader!");
 
             if (_startupFinished) return;
 
@@ -116,33 +160,51 @@ namespace GoingMedievalModLauncher
                 RoomTypePatch.ApplyPatch(harmony);
                 LocalizationControllerPatch.ApplyPatch(harmony);
                 PrefabRepositoryPatch.ApplyPatch(harmony);
+
             }
             catch (Exception e)
             {
-                Logger.Instance.info("Error happened while loading patches.\n" + e);
+                LOGGER.Info("Error happened while loading patches.\n" + e);
                 throw;
             }
             
             try
             {
 
-                Logger.Instance.info("Mod-loader thread is running ...");
+                LOGGER.Info("Mod-loader is running ...");
+                
+                Singleton<PluginManager>.Instance.loadAssemblies();
 
                 // create a gameObject which we can use as a root reference to the scene-graph
                 var modLoaderObject = new GameObject {name = "ModLoader"};
                 modLoaderObject.AddComponent<EngineLauncher>();
                     
                 // print out a nice little confirmation message that the plugin has been loaded
-                Logger.Instance.info("... initialization thread has been finished!");
-                
-                Singleton<PluginManager>.Instance.loadAssemblies();
+                LOGGER.Info("... initialization thread has been finished!");
             }
             catch (Exception e)
             {
-                Logger.Instance.info("An error occured: \n");
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info("An error occured: \n");
+                LOGGER.Info(e.ToString());
                 throw;
             }
+            //For replacements that are required before the game map
+            ReplaceComponent<MapSizeRepository, MapSize>();
+            LOGGER.Info("The Mapsize repository was replaced with a patched one.");
+            ReplaceComponent<VillageNameRepository, VillageNames>();
+            LOGGER.Info("The village name repository was replaced with a patched one.");
+            //TODO: Free me from the enums!
+            //TODO: Please give me a UI!
+            ReplaceComponent<GameDifficultyRepository, GameDifficulty>();
+            LOGGER.Info("The game difficulty repository was replaced with a patched one.");
+            
+            SceneManager.sceneLoaded += delegate(Scene aarg0, LoadSceneMode mode)
+            {
+                if ( aarg0.name == "MainScene" )
+                {
+                    ReplaceRepositories();
+                }
+            };
 
             _startupFinished = true;
         }

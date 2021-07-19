@@ -1,30 +1,25 @@
 ﻿using System;
 using GoingMedievalModLauncher;
 using GoingMedievalModLauncher.plugins;
+using GoingMedievalModLauncher.util;
 using HarmonyLib;
+using NLog;
 using NSEipix.Base;
 using NSMedieval;
 using UnityEngine;
-using Logger = GoingMedievalModLauncher.Logger;
 
 namespace CameraSettingsPlusPlus
 {
     public class CameraSettingsPlusPlus : IPlugin
     {
-        public string Name => "Camera-Settings";
-        
-        public string Description => "Increases rendering-, zoom- & shadow-distance - may slow down performance.";
-        public string ID => "cameraPlusPlus";
-        public string Version => "v0.0.2";
-        
-        public bool activeState { get; set; }
 
+        internal static NLog.Logger LOGGER = LoggingManager.GetLogger<CameraSettingsPlusPlus>();
+        
         public float originalFarClip;
         public float originalHeightRangeMaxValue;
 
         public void initialize()
         {
-            activeState = true;
 
         }
 
@@ -34,8 +29,6 @@ namespace CameraSettingsPlusPlus
 
         public void update(MonoBehaviour root)
         {
-            if(!activeState) return;
-
             try
             {
                 var cc = UnityEngine.GameObject.FindObjectOfType<RtsCamera>();
@@ -61,7 +54,7 @@ namespace CameraSettingsPlusPlus
             }
             catch (Exception e)
             {
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info(e.ToString());
                 throw;
             }
             
@@ -84,12 +77,10 @@ namespace CameraSettingsPlusPlus
             }
             catch (Exception e)
             {
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info(e.ToString());
                 throw;
             }
 
-            activeState = false;
-            
         }
     }
 }

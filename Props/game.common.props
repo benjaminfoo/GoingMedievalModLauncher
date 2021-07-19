@@ -1,4 +1,5 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="builds.common.props"/>
-    <Import Project="references.common.props" />
+    <PropertyGroup>
+        <GameDir>d:\Games\Steam\steamapps\common\Going Medieval</GameDir>
+    </PropertyGroup>
 </Project>

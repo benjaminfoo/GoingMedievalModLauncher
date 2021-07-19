@@ -1,47 +1,45 @@
 ﻿using System;
 using GoingMedievalModLauncher;
 using GoingMedievalModLauncher.plugins;
+using GoingMedievalModLauncher.util;
 using HarmonyLib;
+using NLog;
+using NSMedieval;
 using NSMedieval.Tools;
 using NSMedieval.Tools.Debug;
+using NSMedieval.UI;
 using UnityEngine;
-using Logger = GoingMedievalModLauncher.Logger;
 
 namespace BugReportDisabler
 {
     
     public class BugReportDisablerPlugin : IPlugin
     {
-        
-        public string Name => "Bug-Report Disabler";
 
-        public string Description => "Disables the sending of error-reports.";
-        public string ID => "bugreport_begone";
-        public string Version => "v0.0.2";
-        public bool activeState { get; set; }
+        internal NLog.Logger LOGGER = LoggingManager.GetLogger<BugReportDisablerPlugin>();
 
         public void initialize()
         {
-            activeState = true;
         }
 
         public void start(MonoBehaviour root)
         {
-            if(!activeState) return;
-            
             try
             {
                 // disable the bug reporter
-                Logger.Instance.info("Disabling error reports ...");
+                LOGGER.Info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
+                var settingsCont = UnityEngine.GameObject.FindObjectOfType<OptionsController>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(true);
                 
-                // TODO: GameSettings.sendAutoReports should also be interesting for this
+                var globSettings = Traverse.Create(settingsCont).Field("globalSettings").GetValue() as GlobalSettings;
+                globSettings?.SetSendAutoReports(false);
+                
             }
             catch (Exception e)
             {
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info(e.ToString());
                 throw;
             }
             
@@ -58,16 +56,19 @@ namespace BugReportDisabler
             try
             {
                 // disable the bug reporter
-                Logger.Instance.info("Disabling error reports ...");
+                LOGGER.Info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
+                var settingsCont = UnityEngine.GameObject.FindObjectOfType<OptionsController>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(false);
                 
-                // TODO: GameSettings.sendAutoReports should also be interesting for this
+                var globSettings = Traverse.Create(settingsCont).Field("globalSettings").GetValue() as GlobalSettings;
+                globSettings?.SetSendAutoReports(true);
+                
             }
             catch (Exception e)
             {
-                Logger.Instance.info(e.ToString());
+                LOGGER.Info(e.ToString());
                 throw;
             }
         }

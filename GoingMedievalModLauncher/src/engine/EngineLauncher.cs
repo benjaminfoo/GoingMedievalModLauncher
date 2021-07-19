@@ -35,11 +35,11 @@ namespace GoingMedievalModLauncher.Engine
             foreach (var loadedPlugin in loadedPlugins)
             {
                 PluginComponent pluginComponent = this.gameObject.AddComponent<PluginComponent>();
-                pluginComponent.setup(loadedPlugin.plugin);
+                pluginComponent.setup(loadedPlugin);
             }
 
             // Show a fancy ui to display and control every loaded mod at runtime
-            Logger.Instance.info("Showing mod-manager window...");
+            Launcher.LOGGER.Info("Showing mod-manager window...");
             var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
 
         }

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using GoingMedievalModLauncher.util;
 using UnityEngine;
 
 
@@ -17,11 +18,11 @@ namespace GoingMedievalModLauncher.ui
         {
             this.fileName = newFileName;
             logOutput.Clear();
-            logOutput.Append(Logger.Instance.GetCurrentLogs());
-            Logger.Instance.OnFlushing += updateText;
+            logOutput.Append(LoggingManager.GetCurrentLogs());
+            LoggingManager.OnFlushing += updateText;
 
                 // count the number of newlines from the log and multiply it by the line height 
-            calculatedMaxWindowHeight = logOutput.ToString().Split('\n').Length * 16+32;
+            calculatedMaxWindowHeight = logOutput.ToString().Split('\n').Length * 21+128;
         }
 
         private void updateText(string s)
@@ -29,7 +30,7 @@ namespace GoingMedievalModLauncher.ui
             if(s == null)
                 return;
             logOutput.Append(s);
-            calculatedMaxWindowHeight = logOutput.ToString().Split('\n').Length * 16+32;
+            calculatedMaxWindowHeight = logOutput.ToString().Split('\n').Length * 21+128;
         }
 
         public new void Start()
@@ -58,7 +59,7 @@ namespace GoingMedievalModLauncher.ui
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            Logger.Instance.OnFlushing -= updateText;
+            LoggingManager.OnFlushing -= updateText;
         }
 
 

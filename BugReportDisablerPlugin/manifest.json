@@ -1,0 +1,7 @@
+{
+	"id":"bugreport_begone",
+	"version":"v0.0.2",
+	"name": "Bug-Report Disabler",
+	"description": "Disables the sending of error-reports.",
+	"codeOnly": true
+}

@@ -1,0 +1,7 @@
+{
+  "id":"AdditionalMapSize",
+  "version":"v0.0.1",
+  "name": "Additional Map Sizes",
+  "description": "Adds map sizes to the new-game map-selection screen.",
+  "noCode": true
+}

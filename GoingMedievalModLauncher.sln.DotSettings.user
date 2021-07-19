@@ -25,6 +25,9 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="E:\Programs\GoingMedievalModLauncher\GoingMedievalModLauncher\libs\0Harmony.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\dev\steam\steamapps\common\Going Medieval\Mods\Assembly-CSharp.dll" /&gt;&#xD;
+  &lt;Assembly Path="d:\Games\Steam\steamapps\common\Going Medieval\Going Medieval_Data\Managed\Assembly-CSharp.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=7e2fab97_002D5db2_002D4683_002Da07d_002D3c35e5ed97c0_0023DummyPlugin/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=990eeee2_002Da801_002D4ee9_002Db89a_002De53192219438_0023common/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=990eeee2_002Da801_002D4ee9_002Db89a_002De53192219438_0023common/@EntryIndexedValue">True</s:Boolean>
+	
+	
+	</wpf:ResourceDictionary>

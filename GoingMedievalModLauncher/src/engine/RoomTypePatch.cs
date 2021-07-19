@@ -30,7 +30,7 @@ namespace GoingMedievalModLauncher.Engine
 			var origLoc = typeof(RoomType).GetProperty("NameLocalized").GetMethod;
 			var modLoc = typeof(RoomTypePatch).GetMethod("NameLocalized", BindingFlags.Static | BindingFlags.NonPublic);
 			harmony.Patch(origLoc, new HarmonyMethod(modLoc));
-			Logger.Instance.info("Room type patches were applied.");
+			Launcher.LOGGER.Info("Room type patches were applied.");
 		}
 
 	}

@@ -1,0 +1,36 @@
+{
+  "repository": [
+    {
+      "id": "16x16-DEV",
+      "width": 16,
+      "height": 16,
+      "length": 16,
+      "blockHeight": 3,
+      "shownInRelease": true
+    },
+    {
+      "id": "128x128",
+      "width": 128,
+      "height": 16,
+      "length": 128,
+      "blockHeight": 3,
+      "shownInRelease": true
+    },
+    {
+      "id": "256x256",
+      "width": 256,
+      "height": 16,
+      "length": 256,
+      "blockHeight": 3,
+      "shownInRelease": true
+    },
+    {
+      "id": "512x512",
+      "width": 512,
+      "height": 16,
+      "length": 512,
+      "blockHeight": 3,
+      "shownInRelease": true
+    }
+  ]
+}

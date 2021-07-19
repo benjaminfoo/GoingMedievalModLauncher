@@ -1,0 +1,10 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="common.props" />
+    <PropertyGroup>
+        <ModDir>$(GameDir)\mods\$(MSBuildProjectName)</ModDir>
+        <ManagedBuildDir>$(ModDir)\code</ManagedBuildDir>
+        <Manifest>$(ModDir)\manifest.json</Manifest>
+        <Assets>$(ModDir)\assets</Assets>
+        <OutputPath>$(ModDir)\code</OutputPath>
+    </PropertyGroup>
+</Project>
