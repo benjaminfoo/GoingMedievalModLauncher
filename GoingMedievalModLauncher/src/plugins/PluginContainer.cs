@@ -13,11 +13,11 @@ using NSEipix.Repository;
 using NSMedieval.Construction;
 using NSMedieval.Crops;
 using NSMedieval.Model;
+using NSMedieval.Model.MapNew;
 using NSMedieval.Production;
 using NSMedieval.Repository;
 using NSMedieval.Research;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace GoingMedievalModLauncher.plugins
 {
@@ -102,6 +102,8 @@ namespace GoingMedievalModLauncher.plugins
 
 		void Init();
 
+		void Deinit(MonoBehaviour o);
+
 	}
 	
 	
@@ -172,6 +174,9 @@ namespace GoingMedievalModLauncher.plugins
 		
 		public bool CodeOnly { get; }
 
+		private event Action<MonoBehaviour> OnDeinit;
+		private event Action OnInit;
+
 		private PluginContainer(DirectoryInfo path, ManifestClass manifest)
 		{
 			if ( path != null )
@@ -209,6 +214,19 @@ namespace GoingMedievalModLauncher.plugins
 			}
 
 			_state = ContainerState.ACTIVE;
+			
+			if ( !CodeOnly )
+			{
+				RegisterJsonRepositoryLoader<MapSizeRepository, MapSize>();
+
+				RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
+
+				RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>();
+				RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>();
+				RegisterJsonRepositoryLoaderWithIdField<ProductionRepository, Production>("productionId");
+
+				RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>();
+			}
 
 			if ( !NoCode && _code != null )
 			{
@@ -288,25 +306,61 @@ namespace GoingMedievalModLauncher.plugins
 				}
 				else
 				{
-					var instance = (IPlugin) Activator.CreateInstance(validPlugins[0]);
-
+					IPlugin instance = null;
 					try
 					{
-						instance.initialize();
-						// TODO:  plugin.start(doorstepGameObject);
+						instance = (IPlugin) Activator.CreateInstance(validPlugins[0]);
+
+						void I()
+						{
+							try
+							{
+								instance.initialize();
+								// TODO:  plugin.start(doorstepGameObject);
+							}
+							catch (Exception e)
+							{
+								Launcher.LOGGER.Info($"Unable to initalize plugin {Name}: {e}");
+							}
+						}
+
+						void D(MonoBehaviour o)
+						{
+							try
+							{
+								instance.disable(o);
+								// TODO:  plugin.start(doorstepGameObject);
+							}
+							catch (Exception e)
+							{
+								Launcher.LOGGER.Info($"Unable to disbale plugin {Name}: {e}");
+							}
+						}
+
+						OnInit += I;
+						OnDeinit += D;
 					}
 					catch (Exception e)
 					{
-						Launcher.LOGGER.Info("An error happened initalizting a plugin!\n" + e);
+						Launcher.LOGGER.Info("An error happened instantiating a plugin!\n" + e);
 					}
-
-					plugin = instance;
+					finally
+					{
+						plugin = instance;
+					}
 				}
 			}
 			else
 			{
 				plugin = null;
 			}
+
+		}
+
+		~PluginContainer()
+		{
+			OnDeinit = null;
+			OnInit = null;
 		}
 
 		private bool LoadLanguageFile()
@@ -417,56 +471,10 @@ namespace GoingMedievalModLauncher.plugins
 			return true;
 		}
 
-		private bool LoadJsonRepository<T, M>(T repo, FileInfo json, out RepositoryDto<M> dto)
-			where T : JsonRepository<T, M>
-			where M : Model
-			=> LoadJsonRepositoryWithIdField(repo, json, out dto, "id");
-
 		private void RegisterJsonRepositoryLoader<T, M>()
 			where T : JsonRepository<T, M>
 			where M : Model
-		{
-			Launcher.LOGGER.Info(
-				"Adding register event for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
-			RepositoryPatch<T, M>.PostDeserialization +=
-				delegate(T repo)
-				{
-
-					//If the assets directory is not exist, we won't be able to find the file
-					if ( _assest == null )
-					{
-						Launcher.LOGGER.Info(
-							"Assets directory was null on loading repository: <"
-							+ typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
-						return;
-					}
-
-					Launcher.LOGGER.Info(
-						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
-
-					//Get the overriden JsonFile method, that return the relative path to the json file
-					var _jsonFile = typeof(T).GetMethod("JsonFile", BindingFlags.NonPublic | BindingFlags.Instance);
-
-					if ( _jsonFile == null )
-					{
-						Launcher.LOGGER.Info("Unable to get the protected method \"JsonFile\".");
-						return;
-					}
-
-					if ( LoadJsonRepository<T, M>(repo,
-						new FileInfo(Path.Combine(
-								_assest.FullName, _jsonFile.Invoke(repo, null) as string)),
-						out var rooms) )
-					{
-						foreach ( var item in rooms.Repository )
-						{
-							Launcher.LOGGER.Info($"Added item {item.GetID()} to repository {typeof(T).Name}");
-							repo.Add(item);
-						}
-					}
-
-				};
-		}
+			=> RegisterJsonRepositoryLoaderWithIdField<T, M>("id");
 
 		private void RegisterJsonRepositoryLoaderWithIdField<T, M>(string fieldName)
 			where T : JsonRepository<T, M>
@@ -474,44 +482,80 @@ namespace GoingMedievalModLauncher.plugins
 		{
 			Launcher.LOGGER.Info(
 				"Adding register event for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
-			RepositoryPatch<T, M>.PostDeserialization +=
-				delegate(T repo)
+
+			//If the assets directory is not exist, we won't be able to find the file
+			if ( _assest == null )
+			{
+				Launcher.LOGGER.Info("Assets directory was null on loading repository: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
+
+				return;
+			}
+			
+			var jsonFile = typeof(T).GetMethod("JsonFile", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			if ( jsonFile == null )
+			{
+				Launcher.LOGGER.Info("Unable to get the protected method \"JsonFile\".");
+
+				return;
+			}
+
+			RepositoryDto<M> dto = null;
+			JsonRepository<T, M> rep = null;
+			
+
+				void Del(T repo)
 				{
 
-					//If the assets directory is not exist, we won't be able to find the file
-					if ( _assest == null )
-					{
-						Launcher.LOGGER.Info(
-							"Assets directory was null on loading repository: <"
-							+ typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
-						return;
-					}
+					rep = repo;
 
 					Launcher.LOGGER.Info(
 						"registry event fired for: <" + typeof(T).Name + ", " + typeof(M).Name + "> in mod: " + ID);
 
 					//Get the overriden JsonFile method, that return the relative path to the json file
-					var _jsonFile = typeof(T).GetMethod("JsonFile", BindingFlags.NonPublic | BindingFlags.Instance);
 
-					if ( _jsonFile == null )
+					if ( LoadJsonRepositoryWithIdField<T, M>(
+						repo, new FileInfo(
+							Path.Combine(
+								_assest.FullName, jsonFile
+									.Invoke(repo, null) as string)), out dto, fieldName) )
 					{
-						Launcher.LOGGER.Info("Unable to get the protected method \"JsonFile\".");
-						return;
-					}
-
-					if ( LoadJsonRepositoryWithIdField<T, M>(repo,
-						new FileInfo(Path.Combine(
-							_assest.FullName, _jsonFile.Invoke(repo, null) as string)),
-						out var rooms, fieldName))
-					{
-						foreach ( var item in rooms.Repository )
+						foreach ( var item in dto.Repository )
 						{
 							Launcher.LOGGER.Info($"Added item {item.GetID()} to repository {typeof(T).Name}");
 							repo.Add(item);
 						}
+
+						repo.Reload();
 					}
 
-				};
+				}
+
+				void Rem(MonoBehaviour o)
+				{
+					if ( rep == null || dto == null ) return;
+
+					foreach ( var item in dto.Repository )
+					{
+						rep.RemoveByID(item.GetID());
+					}
+					rep.Reload();
+				}
+
+				void I()
+				{
+					RepositoryPatch<T, M>.PostDeserialization += Del;
+				}
+
+				void D(MonoBehaviour o)
+				{
+					RepositoryPatch<T, M>.PostDeserialization -= Del;
+				}
+
+				OnInit += I;
+				OnDeinit += D;
+				OnDeinit += Rem;
+
 		}
 
 		private void LoadAssetsBundles()
@@ -559,17 +603,16 @@ namespace GoingMedievalModLauncher.plugins
 				Launcher.LOGGER.Info("An error occured while loading the language file.");
 			}
 
-			LoadAssetsBundles();
+			//LoadAssetsBundles();
 
-			RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
-
-			RegisterJsonRepositoryLoader<RoomTypeRepository, RoomType>();
-			RegisterJsonRepositoryLoader<CropfieldRepository, Cropfield>();
-			RegisterJsonRepositoryLoaderWithIdField<ProductionRepository, Production>("productionId");
-
-			RegisterJsonRepositoryLoader<ResearchRepository, ResearchModel>();
+			OnInit?.Invoke();
 		}
-		
+
+		public void Deinit(MonoBehaviour o)
+		{
+			OnDeinit?.Invoke(o);
+		}
+
 		public static IPluginContainer Create(DirectoryInfo dir)
 		{
 			Launcher.LOGGER.Info("Creating plugin container for: " + dir.Name);
@@ -628,7 +671,12 @@ namespace GoingMedievalModLauncher.plugins
 		{
 			throw new NotImplementedException();
 		}
-		
+
+		public void Deinit(MonoBehaviour o)
+		{
+			throw new NotImplementedException();
+		}
+
 		private InvalidPluginContainer(){}
 
 	}
@@ -657,7 +705,12 @@ namespace GoingMedievalModLauncher.plugins
 		public void Init()
 		{
 		}
-		
+
+		public void Deinit(MonoBehaviour o)
+		{
+			
+		}
+
 		private ModLoaderPluginContainer(){}
 
 	}

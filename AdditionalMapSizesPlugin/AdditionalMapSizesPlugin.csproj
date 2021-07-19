@@ -8,10 +8,11 @@
         <AssemblyName>AdditionalMapSizesPlugin</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="AdditionalMapSizesPlugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="assets\lang.json" />
+      <Content Include="assets\MapV2\MapSizes.json" />
       <Content Include="manifest.json" />
       <Content Include="readme.md" />
     </ItemGroup>

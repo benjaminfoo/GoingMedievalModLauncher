@@ -101,7 +101,7 @@ namespace GoingMedievalModLauncher.ui
                         Launcher.LOGGER.Info("Enabling plugin \"" + pluginc.Name + "\" ...");
                         if ( pluginc.plugin != null )
                         {
-                            pluginc.plugin.initialize();
+                            pluginc.Init();
                             pluginc.plugin.start(this);
                         }
 
@@ -113,7 +113,7 @@ namespace GoingMedievalModLauncher.ui
 
                         if ( pluginc.plugin != null )
                         {
-                            pluginc.plugin.disable(this);
+                            pluginc.Deinit(this);
                         }
                         MonoSingleton<AudioManager>.Instance.PlaySound("ToggleOff");
                     }

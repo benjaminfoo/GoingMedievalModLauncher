@@ -1,10 +1,13 @@
 ﻿using System;
 using GoingMedievalModLauncher;
 using GoingMedievalModLauncher.plugins;
+using GoingMedievalModLauncher.util;
 using HarmonyLib;
 using NLog;
+using NSMedieval;
 using NSMedieval.Tools;
 using NSMedieval.Tools.Debug;
+using NSMedieval.UI;
 using UnityEngine;
 
 namespace BugReportDisabler
@@ -13,7 +16,7 @@ namespace BugReportDisabler
     public class BugReportDisablerPlugin : IPlugin
     {
 
-        internal NLog.Logger LOGGER = LoggingManager.getLogger<BugReportDisablerPlugin>();
+        internal NLog.Logger LOGGER = LoggingManager.GetLogger<BugReportDisablerPlugin>();
 
         public void initialize()
         {
@@ -27,9 +30,12 @@ namespace BugReportDisabler
                 LOGGER.Info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
+                var settingsCont = UnityEngine.GameObject.FindObjectOfType<OptionsController>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(true);
                 
-                // TODO: GameSettings.sendAutoReports should also be interesting for this
+                var globSettings = Traverse.Create(settingsCont).Field("globalSettings").GetValue() as GlobalSettings;
+                globSettings?.SetSendAutoReports(false);
+                
             }
             catch (Exception e)
             {
@@ -53,9 +59,12 @@ namespace BugReportDisabler
                 LOGGER.Info("Disabling error reports ...");
                 
                 var bugReporterManager = UnityEngine.GameObject.FindObjectOfType<BugReporterManager>();
+                var settingsCont = UnityEngine.GameObject.FindObjectOfType<OptionsController>();
                 Traverse.Create(bugReporterManager).Field("exceptionCaught").SetValue(false);
                 
-                // TODO: GameSettings.sendAutoReports should also be interesting for this
+                var globSettings = Traverse.Create(settingsCont).Field("globalSettings").GetValue() as GlobalSettings;
+                globSettings?.SetSendAutoReports(true);
+                
             }
             catch (Exception e)
             {

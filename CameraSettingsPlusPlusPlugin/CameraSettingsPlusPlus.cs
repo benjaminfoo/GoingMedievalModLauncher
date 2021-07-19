@@ -1,6 +1,7 @@
 ﻿using System;
 using GoingMedievalModLauncher;
 using GoingMedievalModLauncher.plugins;
+using GoingMedievalModLauncher.util;
 using HarmonyLib;
 using NLog;
 using NSEipix.Base;
@@ -12,7 +13,7 @@ namespace CameraSettingsPlusPlus
     public class CameraSettingsPlusPlus : IPlugin
     {
 
-        internal static NLog.Logger LOGGER = LoggingManager.getLogger<CameraSettingsPlusPlus>();
+        internal static NLog.Logger LOGGER = LoggingManager.GetLogger<CameraSettingsPlusPlus>();
         
         public float originalFarClip;
         public float originalHeightRangeMaxValue;

@@ -3,9 +3,8 @@ using System.IO;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
-using NSEipix.Base;
 
-namespace GoingMedievalModLauncher
+namespace GoingMedievalModLauncher.util
 {
     // a really simple custom logger (class which writes text into files)
     public static class LoggingManager
@@ -41,9 +40,14 @@ namespace GoingMedievalModLauncher
 
         }
 
-        public static Logger getLogger<T>()
+        public static Logger GetLogger<T>()
         {
-            return LogManager.GetLogger(typeof(T).Name);
+            return GetLogger(typeof(T));
+        }
+
+        public static Logger GetLogger(Type t)
+        {
+            return t == null ? null : LogManager.GetLogger(t.Name);
         }
         
         public static string GetCurrentLogs()
