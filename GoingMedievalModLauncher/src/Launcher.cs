@@ -10,6 +10,7 @@ using GoingMedievalModLauncher.util;
 using HarmonyLib;
 using NSEipix.Base;
 using NSEipix.Repository;
+using NSMedieval;
 using NSMedieval.Almanac;
 using NSMedieval.Crops;
 using NSMedieval.GameEventSystem;
@@ -44,12 +45,12 @@ namespace GoingMedievalModLauncher
             where M : Model
         {
             object it = Repositories[typeof(T)];
-            if ( it as T == null )
+            if ( it is JsonRepository<T, M> repo )
             {
-                return null;
+                return repo;
             }
 
-            return it as JsonRepository<T, M>;
+            return null;
         }
 
         // the entry point of the code execution
@@ -64,11 +65,16 @@ namespace GoingMedievalModLauncher
             where T : JsonRepository<T, M>
             where M : Model
         {
+            var comp = Object.FindObjectOfType<T>();
+            if ( comp == null )
+            {
+                LOGGER.Info($"Unable to find component: {typeof(T).Name}");
+                return;
+            }
             TypeBuilder b = DynamicRepositoryBuilder<T, M>.GetTypeBuilder(
                 $"Patched_{typeof(T).Name}");
             DynamicRepositoryBuilder<T, M>.OverrideDeserialize(b);
             Type t = DynamicRepositoryBuilder<T, M>.CompileResultType(b);
-            var comp = Object.FindObjectOfType<T>();
             object[] variables = new object[0];
             if ( fieldToCopy != null )
             {
@@ -155,7 +161,7 @@ namespace GoingMedievalModLauncher
             {
                 var harmony = new Harmony("com.modloader.nsmeadival");
                     
-                DebbugingPatches.ApplyPatches(harmony);
+                //DebbugingPatches.ApplyPatches(harmony);
                 MainMenuPatch.ApplyPatch(harmony);
                 RoomTypePatch.ApplyPatch(harmony);
                 LocalizationControllerPatch.ApplyPatch(harmony);
@@ -173,7 +179,7 @@ namespace GoingMedievalModLauncher
 
                 LOGGER.Info("Mod-loader is running ...");
                 
-                Singleton<PluginManager>.Instance.loadAssemblies();
+                Singleton<PluginManager>.Instance.LoadAssemblies();
 
                 // create a gameObject which we can use as a root reference to the scene-graph
                 var modLoaderObject = new GameObject {name = "ModLoader"};
@@ -189,6 +195,8 @@ namespace GoingMedievalModLauncher
                 throw;
             }
             //For replacements that are required before the game map
+            ReplaceComponent<MapRepository, Map>();
+            LOGGER.Info("The Maptype repository was replaced with a patched one.");
             ReplaceComponent<MapSizeRepository, MapSize>();
             LOGGER.Info("The Mapsize repository was replaced with a patched one.");
             ReplaceComponent<VillageNameRepository, VillageNames>();

@@ -24,7 +24,7 @@ namespace GoingMedievalModLauncher.plugins
         /**
          * Loads all assemblies by a given path
          */
-        public ICollection<PluginContainer> loadAssemblies()
+        public ICollection<PluginContainer> LoadAssemblies()
         {
             // The directory where all assemblies / plugins / mods have to be stored
             DirectoryInfo dir = new DirectoryInfo(@"./mods");
@@ -65,14 +65,13 @@ namespace GoingMedievalModLauncher.plugins
                     var p = pc.ToList();
                     foreach ( var container in p )
                     {
-                        if ( leaf.value.ID == container.Requirement )
-                        {
-                            tree.Add(new PluginTree.TreeNode(leaf, container));
-                            pc.Remove(container);
-                        }
+                        if ( leaf.value.ID != container.Requirement ) continue;
+
+                        tree.Add(new PluginTree.TreeNode(leaf, container));
+                        pc.Remove(container);
                     }
                 }
-            } while ( leaves.Equals(tree.leaves));
+            } while ( !leaves.Equals(tree.leaves));
 
             foreach ( PluginContainer container in pc )
             {

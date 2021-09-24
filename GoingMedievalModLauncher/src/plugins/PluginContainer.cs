@@ -5,11 +5,13 @@ using System.Linq;
 using System.Reflection;
 using GoingMedievalModLauncher.Engine;
 using GoingMedievalModLauncher.MonoScripts;
+using GoingMedievalModLauncher.ui;
 using I2.Loc;
 using Newtonsoft.Json;
 using NSEipix.Base;
 using NSEipix.ObjectMapper;
 using NSEipix.Repository;
+using NSMedieval;
 using NSMedieval.Construction;
 using NSMedieval.Crops;
 using NSMedieval.Model;
@@ -98,6 +100,9 @@ namespace GoingMedievalModLauncher.plugins
 		/// </summary>
 		bool CodeOnly { get; }
 		
+		/// <summary>
+		/// Indicates that the launcher should not search in the code directory
+		/// </summary>
 		bool NoCode { get; }
 
 		void Init();
@@ -165,14 +170,13 @@ namespace GoingMedievalModLauncher.plugins
 			}
 		}
 
-		public bool NoCode { get; }
-
 		/// <summary>
 		/// The backing variable of the State property.
 		/// </summary>
 		private ContainerState _state;
 		
 		public bool CodeOnly { get; }
+		public bool NoCode { get; }
 
 		private event Action<MonoBehaviour> OnDeinit;
 		private event Action OnInit;
@@ -217,6 +221,7 @@ namespace GoingMedievalModLauncher.plugins
 			
 			if ( !CodeOnly )
 			{
+				RegisterJsonRepositoryLoader<MapRepository, Map>();
 				RegisterJsonRepositoryLoader<MapSizeRepository, MapSize>();
 
 				RegisterJsonRepositoryLoaderWithIdField<ResourceRepository, Resource>("resourceId");
@@ -240,7 +245,7 @@ namespace GoingMedievalModLauncher.plugins
 					assemblies.Add(assembly);
 				}
 				
-				// Check if the assembly is valid (we don't want to load any dll within the mods-directory
+				// Check if the assembly is valid (we don't want to load any dll within the mods-directory)
 				Type pluginType = typeof(IPlugin);
 				List<Type> validPlugins = new List<Type>();
 				
@@ -250,7 +255,7 @@ namespace GoingMedievalModLauncher.plugins
 					{
 						if ( assembly != null )
 						{
-							Type[] types = new Type[0];
+							Type[] types = Type.EmptyTypes;
 							try
 							{
 								types = assembly.GetTypes();
@@ -287,12 +292,11 @@ namespace GoingMedievalModLauncher.plugins
 				}
 				catch (Exception e)
 				{
-					Launcher.LOGGER.Info("Unable to get Plugin's type. Maybe the code is referencing an older launcher?");
-					Launcher.LOGGER.Info(e.ToString());
-					
+					Launcher.LOGGER.Error(e,
+						"Unable to get Plugin's type. Maybe the code is referencing an older launcher?");
 				}
 
-				//TODO: more erros?
+				//TODO: more errors?
 				if ( validPlugins.Count == 0 )
 				{
 					Launcher.LOGGER.Info("No valid plugin were found for this directory.");
@@ -320,7 +324,7 @@ namespace GoingMedievalModLauncher.plugins
 							}
 							catch (Exception e)
 							{
-								Launcher.LOGGER.Info($"Unable to initalize plugin {Name}: {e}");
+								Launcher.LOGGER.Error(e,$"Unable to initalize plugin {Name}");
 							}
 						}
 
@@ -329,11 +333,11 @@ namespace GoingMedievalModLauncher.plugins
 							try
 							{
 								instance.disable(o);
-								// TODO:  plugin.start(doorstepGameObject);
+								// TODO:  plugin.stop(doorstepGameObject);
 							}
 							catch (Exception e)
 							{
-								Launcher.LOGGER.Info($"Unable to disbale plugin {Name}: {e}");
+								Launcher.LOGGER.Error(e,$"Unable to disbale plugin {Name}");
 							}
 						}
 
@@ -342,7 +346,7 @@ namespace GoingMedievalModLauncher.plugins
 					}
 					catch (Exception e)
 					{
-						Launcher.LOGGER.Info("An error happened instantiating a plugin!\n" + e);
+						Launcher.LOGGER.Error(e,"An error happened instantiating a plugin!\n");
 					}
 					finally
 					{
@@ -525,8 +529,9 @@ namespace GoingMedievalModLauncher.plugins
 							Launcher.LOGGER.Info($"Added item {item.GetID()} to repository {typeof(T).Name}");
 							repo.Add(item);
 						}
-
-						repo.Reload();
+						
+						//DO NOT! RECURSION ALERT!
+						//repo.Reload();
 					}
 
 				}
@@ -711,7 +716,19 @@ namespace GoingMedievalModLauncher.plugins
 			
 		}
 
-		private ModLoaderPluginContainer(){}
+		private ModLoaderPluginContainer()
+		{
+			MainMenuPatch.OnMenuStartPost += () =>
+			{
+				MainMenuPatch.AddMainMenuButton("ModsButton", "Mods", () =>
+				{
+					if(EngineLauncher.Instance.modManagerWindow == null) return;
+
+					EngineLauncher.Instance.modManagerWindow.shown = !EngineLauncher.Instance.modManagerWindow.shown;
+					
+				}, 15);
+			};
+		}
 
 	}
 

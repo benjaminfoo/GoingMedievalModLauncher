@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace GoingMedievalModLauncher.MonoScripts
 {
+	
+	/// <summary>
+	/// An example class to add buildable objects. WIP
+	/// </summary>
 	public class BarrelBuildableView : BaseBuildableView<BuildingInstance>, IHideObject
 	{
 
