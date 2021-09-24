@@ -71,7 +71,7 @@ namespace GoingMedievalModLauncher.plugins
                         pc.Remove(container);
                     }
                 }
-            } while ( !leaves.Equals(tree.leaves));
+            } while ( leaves.Equals(tree.leaves));
 
             foreach ( PluginContainer container in pc )
             {

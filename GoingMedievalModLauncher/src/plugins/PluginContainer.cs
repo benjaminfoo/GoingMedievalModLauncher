@@ -692,7 +692,7 @@ namespace GoingMedievalModLauncher.plugins
 	public sealed class ModLoaderPluginContainer : Singleton<ModLoaderPluginContainer>, IPluginContainer
 	{
 
-		public string Version => "v0.0.2";
+		public string Version => "v0.3.5";
 		public string Requirement => "";
 		public string[] Dependencies => null;
 		public bool ActiveState { get=> true; set{} }
