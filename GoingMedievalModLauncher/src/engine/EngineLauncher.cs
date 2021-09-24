@@ -11,8 +11,11 @@ namespace GoingMedievalModLauncher.Engine
     
     // The EngineLauncher gets loads any provided mod from the /mods directory and instantiates the lifecycle of each
     // plugin within the unity-engine.
-    public class EngineLauncher : MonoBehaviour
+    public class EngineLauncher : MonoSingleton<EngineLauncher>
     {
+
+        public ModManagerWindow modManagerWindow = null;
+        
         public void Awake()
         {
 
@@ -22,7 +25,7 @@ namespace GoingMedievalModLauncher.Engine
             t.Field("suffix").SetValue(" - mods active");
             t.Method("Start").GetValue();
 
-            // dont destroy the engines object when loading another scene, etc.
+            // don't destroy the engines object when loading another scene, etc.
             DontDestroyOnLoad(this);
 
             // Load all the mods / plugins / assemblies from the mods directory
@@ -40,7 +43,7 @@ namespace GoingMedievalModLauncher.Engine
 
             // Show a fancy ui to display and control every loaded mod at runtime
             Launcher.LOGGER.Info("Showing mod-manager window...");
-            var modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
+            modManagerWindow = gameObject.AddComponent<ModManagerWindow>();
 
         }
 

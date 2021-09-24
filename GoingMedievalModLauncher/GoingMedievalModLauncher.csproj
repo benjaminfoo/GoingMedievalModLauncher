@@ -22,7 +22,6 @@
     <ItemGroup>
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="src\buildings\BuildingBase.cs" />
-        <Compile Include="src\engine\DebbugingPatches.cs" />
         <Compile Include="src\engine\DynamicRepositoryBuilder.cs" />
         <Compile Include="src\engine\EngineLauncher.cs" />
         <Compile Include="src\engine\LocalizationControllerPatch.cs" />
@@ -50,13 +49,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="dist\mods" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="NLog" Version="4.7.10" />
-        <PackageReference Include="Lib.Harmony" Version="2.1.0" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

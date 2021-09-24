@@ -10,7 +10,7 @@ namespace GoingMedievalModLauncher.Engine
 
 		private static void GetTextPre(ref string key)
 		{
-			if ( key.Contains(":") )
+			if ( key != null && key.Contains(":") )
 			{
 				var modS = key.Split('#', ':');
 				if ( modS.Length == 3 )
